@@ -14,6 +14,9 @@ Controls:
     - ctrl+f     -> search for the next item which contains string.
     - '\\'        -> find next item that contains string.
     - enter      -> choose selected item.
+    - ctrl+n     -> create new list item.
+    - ctrl+r     -> rename selected item.
+    - delete     -> delete selected item.
     - ctrl+u     -> update printed list (if list or console size was changed).
     - '='/'-'    -> increase/decrease length of item names before they are cut off.
     - '?'        -> display current help page.
@@ -53,7 +56,7 @@ def waitForEnter():
         pass
 
 
-class ConsoleInterface:
+class ConsoleListInterface:
     """Class for interacting with the console list, an interface for selecting and searching in a list printed to the console.
     
     The default commands are explained in the DEFAULTHELP help page.
@@ -69,7 +72,7 @@ class ConsoleInterface:
     # the ( -> /    ) before list items
     _SPACESBEFORE = 4  
 
-    _INTERNALCOMMANDS = [key.UP, key.DOWN, key.LEFT, key.RIGHT, key.CTRL_F, '\\', key.CTRL_U, '=', '-', '?']
+    _INTERNALCOMMANDS = [key.UP, key.DOWN, key.LEFT, key.RIGHT, key.CTRL_F, '\\', key.CTRL_N, key.CTRL_R, key.DELETE, key.CTRL_U, '=', '-', '?']
 
 
     def __init__(self, items: list[str] = [], specialCommands: list[str] = [key.ENTER, key.ESC], helpPage: str = DEFAULTHELP, startPos: int = 0, 
@@ -88,7 +91,7 @@ class ConsoleInterface:
             disableHelp: disable the "Type '?' for help page." message and help page printing.
 
         Returns:
-            ConsoleInterface object.
+            ConsoleListInterface object.
 
         """
         if items == None:
@@ -133,8 +136,8 @@ class ConsoleInterface:
     def printList(self):
         """Printing the items of the list currently in focus.
         
-        As long as all printing to console is done only through the same ConsoleInterface, the methods reprint the list automatically every time it is necessary. 
-        Therefore, this method should only be used if printing is done from a different source, including another ConsoleInterface object.
+        As long as all printing to console is done only through the same ConsoleListInterface, the methods reprint the list automatically every time it is necessary. 
+        Therefore, this method should only be used if printing is done from a different source, including another ConsoleListInterface object.
         """
 
         # console size has been changed
@@ -329,6 +332,28 @@ class ConsoleInterface:
                 
                 continue
 
+            
+            # adding new list item
+            if command == self._commandBind[key.CTRL_N]:
+                self._items += self.separateInteraction(function=input("Type name of new element:\n"))
+                self.printList()
+
+            # renaming selected item
+            if command == self._commandBind[key.CTRL_R]:
+                pos = (self._column - 1) * self._itemsPerColumn + self._line - 1
+                newName = self.separateInteraction(function=input(f"Rename '{self._items[pos]}' to (or leave empty to cancel):\n"))
+                
+                if newName and not newName.isspace():
+                    self._items[pos] = newName
+                    self.printList()
+
+            # deleting selected item
+                pos = (self._column - 1) * self._itemsPerColumn + self._line - 1
+                delete = self.separateInteraction(message=f"Type 'Y' or 'y' to remove '{self._items[pos]}':\n", function=readkey())
+                
+                if newName and not newName.isspace():
+                    self._items.pop(pos)
+                    self.printList()
 
             # making item names longer
             if command == self._commandBind['='] and 1 < self._maxColumns:
@@ -353,7 +378,7 @@ class ConsoleInterface:
 
                 continue
 
-
+            # printing help page
             if not self._disableHelp and command == self._commandBind['?']:
                 cls()
                 moveCursor(0, 0)
@@ -364,7 +389,7 @@ class ConsoleInterface:
 
                 continue
 
-            
+            # refreshing list (for console size change)
             if command == self._commandBind[key.CTRL_U]:
                 self.printList()
 
@@ -407,13 +432,22 @@ class ConsoleInterface:
                 functionReturn = function(functionArgs)
 
             else:
-                functionReturn = function(None)
+                functionReturn = function()
 
         self.printList()
 
         cursor.hide()
 
         return functionReturn
+
+
+    def getItems(self):
+        """Returns the current list of items.
+        Especially useful if ctrl+n, ctrl+r and delete are kept as internal commands.
+
+        """
+
+        return self._items
 
 
     def updateList(self, newItems: list[str]):

@@ -1,6 +1,6 @@
 from readchar import readkey, readchar, key
+from typing import Callable, Any, Optional
 from math import ceil as roundup
-from typing import Callable, Any
 import cursor
 import sys
 import os
@@ -73,7 +73,7 @@ class ConsoleInterface:
 
 
     def __init__(self, items: list[str] = [], specialCommands: list[str] = [key.ENTER, key.ESC], helpPage: str = DEFAULTHELP, startPos: int = 0, 
-                 printFunc: Callable[[str, int], int] = None, rebindCommand: dict[str, str] = {}, disableHelp: bool = False):
+                 printFunc: Optional[Callable[[str, int], int]] = None, rebindCommand: dict[str, str] = {}, disableHelp: bool = False):
         """Intializes console interface.
 
         Args:
@@ -370,7 +370,7 @@ class ConsoleInterface:
 
                 continue
 
-    def separateInteraction(self, message: str = None, function: Callable[[Any], Any] = None, functionArgs: Any = None, startAtTop: bool = False, showCursor: bool = False):
+    def separateInteraction(self, message: Optional[str] = None, function: Optional[Callable[[Any], Any]] = None, functionArgs: Optional[Any] = None, startAtTop: bool = False, showCursor: bool = False):
         """This method is for user interaction separate from the list interface.
         Once finished, it will reprint the list.
         

@@ -1,20 +1,10 @@
 Traceback (most recent call last):
   File "C:\Users\Mihnea\Desktop\Random thoughts\Cool stuff\ConsoleListInterface\example\ConsoleListInterfaceExample.py", line 24, in <module>
     main()
-  File "C:\Users\Mihnea\Desktop\Random thoughts\Cool stuff\ConsoleListInterface\example\ConsoleListInterfaceExample.py", line 16, in main
-    console.separateInteraction(message=f"You have chosen {console.getItems[curr_pos]}!")
-                                                           ~~~~~~~~~~~~~~~~^^^^^^^^^^
-TypeError: 'method' object is not subscriptable
-Traceback (most recent call last):
-  File "C:\Users\Mihnea\Desktop\Random thoughts\Cool stuff\ConsoleListInterface\example\ConsoleListInterfaceExample.py", line 24, in <module>
-    main()
   File "C:\Users\Mihnea\Desktop\Random thoughts\Cool stuff\ConsoleListInterface\example\ConsoleListInterfaceExample.py", line 13, in main
     command, curr_pos = console.interact()
                         ^^^^^^^^^^^^^^^^^^
-  File "C:\Users\Mihnea\Desktop\Random thoughts\Cool stuff\ConsoleListInterface\ConsoleListInterface.py", line 338, in interact
-    self._items += self.separateInteraction(function=input("Type name of new element:\n"))
-                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\Mihnea\Desktop\Random thoughts\Cool stuff\ConsoleListInterface\ConsoleListInterface.py", line 435, in separateInteraction
-    functionReturn = function()
-                     ^^^^^^^^^^
-TypeError: 'str' object is not callable
+  File "C:\Users\Mihnea\Desktop\Random thoughts\Cool stuff\ConsoleListInterface\ConsoleListInterface.py", line 355, in interact
+    if newName and not newName.isspace():
+       ^^^^^^^
+UnboundLocalError: cannot access local variable 'newName' where it is not associated with a value

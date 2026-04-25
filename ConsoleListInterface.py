@@ -335,23 +335,24 @@ class ConsoleListInterface:
             
             # adding new list item
             if command == self._commandBind[key.CTRL_N]:
-                self._items += self.separateInteraction(function=input("Type name of new element:\n"))
+                self._items += self.separateInteraction(function=lambda: input("Type name of new element:\n"), showCursor=True)
                 self.printList()
 
             # renaming selected item
             if command == self._commandBind[key.CTRL_R]:
                 pos = (self._column - 1) * self._itemsPerColumn + self._line - 1
-                newName = self.separateInteraction(function=input(f"Rename '{self._items[pos]}' to (or leave empty to cancel):\n"))
+                newName = self.separateInteraction(function=lambda: input(f"Rename '{self._items[pos]}' to (or leave empty to cancel):\n"), showCursor=True)
                 
                 if newName and not newName.isspace():
                     self._items[pos] = newName
                     self.printList()
 
             # deleting selected item
+            if command == self._commandBind[key.DELETE]:
                 pos = (self._column - 1) * self._itemsPerColumn + self._line - 1
-                delete = self.separateInteraction(message=f"Type 'Y' or 'y' to remove '{self._items[pos]}':\n", function=readkey())
+                delete = self.separateInteraction(message=f"Type 'y' to remove '{self._items[pos]}'.", function=readkey)
                 
-                if newName and not newName.isspace():
+                if delete == 'y':
                     self._items.pop(pos)
                     self.printList()
 

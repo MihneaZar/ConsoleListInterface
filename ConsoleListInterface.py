@@ -407,7 +407,7 @@ class ConsoleInterface:
                 functionReturn = function(functionArgs)
 
             else:
-                functionReturn = function()
+                functionReturn = function(None)
 
         self.printList()
 
@@ -475,7 +475,7 @@ class ConsoleInterface:
         moveCursor(self._line, (self._column - self._leftmostColumn) * (self._SPACESBEFORE + self._maxNameWidth))
         print(" -> ")
         
-    def updatePrint(self, newPrintFunc: Callable[[str, int], int] = None):
+    def updatePrint(self, newPrintFunc: Optional[Callable[[str, int], int]] = None):
         """Change printing function for items.
 
         Args:
@@ -516,7 +516,7 @@ class ConsoleInterface:
 
         self._helpPage = newHelpPage
 
-    def toggleHelpPage(self, disableHelp: bool = None):
+    def toggleHelpPage(self, disableHelp: Optional[bool] = None):
         """Change whether the "Type '?' for help page." message is shown and the help page is printed.
 
         Args:

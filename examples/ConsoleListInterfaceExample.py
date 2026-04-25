@@ -8,7 +8,7 @@ import sys
 sys.stderr = open(f'C:/Users/Mihnea/Desktop/Random thoughts/Cool stuff/ConsoleListInterface/example/errors.txt', "a")
 
 def main():
-    console = ConsoleListInterface(open("example.txt").readlines())
+    console = ConsoleListInterface([line.replace('\n', '') for line in open("example.txt").readlines()])
     while True:
         command, curr_pos = console.interact()
 

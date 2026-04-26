@@ -10,6 +10,10 @@ The [python-readchar](https://pypi.org/project/readchar/) library.
 - waitForEnter()             -> function for waiting specifically for enter to be pressed (also using readchar);
 - cls()                      -> clears the screen (should work both on Windows and Linux).
 
+## Example Usage
+- [This](examples/ConsoleListInterfaceExample.py) is the simplest version of using the ConsoleListInterface Class;
+- [This](examples/RandomSelector.py) is how the Class can be used for a simple visual random selector. 
+
 ## Extra Info
 Class functions are explained in the comments. <br>
 Only tested on Windows 11.

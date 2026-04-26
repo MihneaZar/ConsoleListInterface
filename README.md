@@ -12,8 +12,8 @@ A class for interacting with a list of items in the console/terminal.
 - cls()                      -> clears the screen (should work both on Windows and Linux).
 
 ## Example Usage
-- [This](examples/ConsoleListInterfaceExample.py) is the simplest version of using the ConsoleListInterface Class;
-- [This](examples/RandomSelector.py) is how the Class can be used for a simple visual random selector. 
+- [This example](examples/ConsoleListInterfaceExample.py) is the simplest version of using the ConsoleListInterface class;
+- [This example](examples/RandomSelector.py) is how the class can be used for a simple visual random selector. 
 
 ## Extra Info
 Class functions are explained in the comments. <br>

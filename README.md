@@ -2,7 +2,8 @@
 A class for interacting with a list of items in the console/terminal.
 
 ## Requirements
-The [python-readchar](https://pypi.org/project/readchar/) library.
+- The [python-readchar](https://pypi.org/project/readchar/) library for reading keystrokes;
+- The [cursor](https://pypi.org/project/cursor/) library for hiding the cursor in console.
 
 ## Additional Functions
 - moveCursor(y: int, x: int) -> places the console cursor at given position (implementation might not work in all console environments);

@@ -346,6 +346,9 @@ class ConsoleListInterface:
 
             # renaming selected item
             if command == self._commandBind[key.CTRL_R]:
+                if not self._items:
+                    continue
+
                 pos = (self._column - 1) * self._itemsPerColumn + self._line - 1
                 newName = self.separateInteraction(function=lambda: input(f"Rename '{self._items[pos]}' to (or leave empty to cancel):\n"), showCursor=True)
                 
@@ -358,6 +361,9 @@ class ConsoleListInterface:
 
             # deleting selected item
             if command == self._commandBind[key.DELETE]:
+                if not self._items:
+                    continue
+
                 pos = (self._column - 1) * self._itemsPerColumn + self._line - 1
                 delete = self.separateInteraction(message=f"Type 'y' to remove '{self._items[pos]}'.", function=readkey)
                 
@@ -474,7 +480,7 @@ class ConsoleListInterface:
         self._items = [item.replace('\n', '') for item in newItems] # accidental '\n' fucks up printing
 
         self._totalColumns      = roundup(len(self._items) / self._itemsPerColumn)
-        self._lastColumnHeight  = len(self._items) % self._itemsPerColumn
+        self._lastColumnHeight  = len(self._items) % self._itemsPerColumn if self._items else 0
 
         if self._lastColumnHeight == 0:
             self._lastColumnHeight = self._itemsPerColumn

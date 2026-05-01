@@ -120,10 +120,11 @@ class ConsoleListInterface:
         self._totalColumns      = roundup(len(self._items) / self._itemsPerColumn)
         self._lastColumnHeight  = len(self._items) % self._itemsPerColumn
 
-        if self._lastColumnHeight == 0 and self._items:
+        if self._lastColumnHeight == 0:
             self._lastColumnHeight = self._itemsPerColumn
                         
         if not self._items:
+            self._totalColumns     = 1
             self._lastColumnHeight = 1
 
         self._searchStr = None # saved search string for repeated searches
@@ -150,6 +151,13 @@ class ConsoleListInterface:
             
             self._totalColumns     = roundup(len(self._items) / self._itemsPerColumn)
             self._lastColumnHeight = len(self._items) % self._itemsPerColumn
+
+            if self._lastColumnHeight == 0:
+                self._lastColumnHeight = self._itemsPerColumn
+                            
+            if not self._items:
+                self._totalColumns     = 1
+                self._lastColumnHeight = 1
 
             self._maxColumns = int(self._consoleWidth / (self._SPACESBEFORE + self._maxNameWidth))
 
@@ -482,7 +490,7 @@ class ConsoleListInterface:
         self._totalColumns     = roundup(len(self._items) / self._itemsPerColumn)
         self._lastColumnHeight = len(self._items) % self._itemsPerColumn
 
-        if self._lastColumnHeight == 0 and self._items:
+        if self._lastColumnHeight == 0:
             self._lastColumnHeight = self._itemsPerColumn
                         
         if not self._items:

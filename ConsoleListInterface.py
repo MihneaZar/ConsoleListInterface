@@ -227,7 +227,7 @@ class ConsoleListInterface:
                 return command, (self._column - 1) * self._itemsPerColumn + self._line - 1
 
 
-            # searching by first character in filename
+            # searching by first character in item names
             if command not in self._actualCommands:
                 first_letter = command.lower()
                 current_position = (self._column - 1) * self._itemsPerColumn + self._line - 1
@@ -242,7 +242,7 @@ class ConsoleListInterface:
                 
                 continue
 
-            # searching by string in filename
+            # searching by string in item names
             if command in [self._commandBind[key.CTRL_F], self._commandBind['\\']]:
                 reprint = False
                 if command == self._commandBind[key.CTRL_F]:

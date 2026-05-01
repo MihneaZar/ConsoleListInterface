@@ -381,8 +381,9 @@ class ConsoleListInterface:
                     self.updateList(self._items)
                     self.printList() 
 
-                # returns command and the position of the deleted item in the non-updated list
-                return command, (self._column - 1) * self._itemsPerColumn + self._line - 1
+                    # returns command and the position of the deleted item in the non-updated list
+                    # ONLY if it actually deletes
+                    return command, (self._column - 1) * self._itemsPerColumn + self._line - 1
 
             # making item names longer
             if command == self._commandBind['='] and 1 < self._maxColumns:

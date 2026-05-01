@@ -377,7 +377,7 @@ class ConsoleListInterface:
                 
                 if delete == 'y':
                     self._items.pop(pos)
-                    self.UpdatePos(pos - 1)
+                    self.updatePos(pos - 1)
                     self.printList() 
 
                 # returns command and the position of the deleted item in the non-updated list

@@ -1,11 +1,13 @@
 import sys
-sys.path.append('C:\\Users\\Mihnea\\Desktop\\Random thoughts\\Cool stuff\\ConsoleListInterface')
+sys.path.append('..')
 
 from ConsoleListInterface import ConsoleListInterface # pyright: ignore[reportMissingImports]
 from readchar import key
 import sys
+import os
 
-sys.stderr = open(f'C:/Users/Mihnea/Desktop/Random thoughts/Cool stuff/ConsoleListInterface/example/errors.txt', "a")
+HOMEPATH = os.path.dirname(os.path.realpath(__file__))
+sys.stderr = open(f'{HOMEPATH}/errors.txt', "a")
 
 def main():
     console = ConsoleListInterface([line.replace('\n', '') for line in open("example.txt").readlines()])

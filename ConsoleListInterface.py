@@ -344,6 +344,7 @@ class ConsoleListInterface:
             # adding new list item
             if command == self._commandBind[key.CTRL_N]:
                 self._items += self.separateInteraction(function=lambda: input("Type name of new element:\n"), showCursor=True)
+                self.updateList(self._items)
                 self.printList()
 
                 # updating position to last element, which is where the new one will be
@@ -377,7 +378,7 @@ class ConsoleListInterface:
                 
                 if delete == 'y':
                     self._items.pop(pos)
-                    self.updatePos(pos - 1)
+                    self.updateList(self._items)
                     self.printList() 
 
                 # returns command and the position of the deleted item in the non-updated list

@@ -120,7 +120,7 @@ class ConsoleListInterface:
         self._totalColumns      = roundup(len(self._items) / self._itemsPerColumn)
         self._lastColumnHeight  = len(self._items) % self._itemsPerColumn
 
-        if self._lastColumnHeight == 0:
+        if self._lastColumnHeight == 0 and self._items:
             self._lastColumnHeight = self._itemsPerColumn
                         
         if not self._items:
@@ -479,10 +479,10 @@ class ConsoleListInterface:
 
         self._items = [item.replace('\n', '') for item in newItems] # accidental '\n' fucks up printing
 
-        self._totalColumns      = roundup(len(self._items) / self._itemsPerColumn)
-        self._lastColumnHeight  = len(self._items) % self._itemsPerColumn if self._items else 0
+        self._totalColumns     = roundup(len(self._items) / self._itemsPerColumn)
+        self._lastColumnHeight = len(self._items) % self._itemsPerColumn
 
-        if self._lastColumnHeight == 0:
+        if self._lastColumnHeight == 0 and self._items:
             self._lastColumnHeight = self._itemsPerColumn
                         
         if not self._items:

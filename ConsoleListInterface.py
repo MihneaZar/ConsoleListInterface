@@ -338,6 +338,12 @@ class ConsoleListInterface:
                 self._items += self.separateInteraction(function=lambda: input("Type name of new element:\n"), showCursor=True)
                 self.printList()
 
+                # updating position to last element, which is where the new one will be
+                self.updatePos(len(self._items) - 1)
+
+                # returns command and the position of the new item
+                return command, (self._column - 1) * self._itemsPerColumn + self._line - 1
+
             # renaming selected item
             if command == self._commandBind[key.CTRL_R]:
                 pos = (self._column - 1) * self._itemsPerColumn + self._line - 1
@@ -347,6 +353,9 @@ class ConsoleListInterface:
                     self._items[pos] = newName
                     self.printList()
 
+                    # returns command and the position of the renamed item
+                    return command, (self._column - 1) * self._itemsPerColumn + self._line - 1
+
             # deleting selected item
             if command == self._commandBind[key.DELETE]:
                 pos = (self._column - 1) * self._itemsPerColumn + self._line - 1
@@ -355,6 +364,9 @@ class ConsoleListInterface:
                 if delete == 'y':
                     self._items.pop(pos)
                     self.printList()
+
+                # returns command and the position of the deleted item in the non-updated list
+                return command, (self._column - 1) * self._itemsPerColumn + self._line - 1
 
             # making item names longer
             if command == self._commandBind['='] and 1 < self._maxColumns:

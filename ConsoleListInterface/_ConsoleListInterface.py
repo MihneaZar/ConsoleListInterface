@@ -133,7 +133,7 @@ class ConsoleListInterface:
 
 
     def printList(self):
-        """Printing the items of the list currently in focus.
+        """Printing the items of the list that are currently in focus.
         
         As long as all printing to console is done only through the same ConsoleListInterface, the methods reprint the list automatically every time it is necessary. 
         Therefore, this method should only be used if printing is done from a different source, including another ConsoleListInterface object.
@@ -195,7 +195,7 @@ class ConsoleListInterface:
         """Interacting with the interface, until a special command is issued.
 
         Args:
-            reprintList (bool): whether to reprint the list before the loop (if the list isn't already printed).
+            reprintList (bool): whether to reprint the list before the loop (if the console has been cleared by something other than this interface).
 
         Returns:
             tuple(str, int): the special command selected and the current position in list. 

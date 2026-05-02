@@ -7,7 +7,8 @@ A library for interacting with a list of items in the console/terminal.
 
 ## Setup 
 Simply run 'pip3 install .' in the root directory, and pip will install this library as an importable Python package. <br>
-The package name is 'ConsoleListInterface', and the console interface class and the additional functions can be found in the 'ConsoleListInterface.Interface' import. <br>
+The package name is 'ConsoleListInterface'. <br>
+Import with 'from ConsoleListInterface import [ConsoleListInterface | moveCursor | lowercaseKey | waitForEnter | cls]'. <br>
 Uninstall with 'pip3 uninstall ConsoleListInterface.
 
 ## Additional Functions

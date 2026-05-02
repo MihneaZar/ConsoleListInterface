@@ -310,7 +310,7 @@ class ConsoleListInterface:
             
             # adding new list item
             if command == self._commandBind[key.CTRL_N]:
-                self._items += self.separateInteraction(function=lambda: input("Type name of new element:\n"), showCursor=True)
+                self._items.append(self.separateInteraction(function=lambda: input("Type name of new element:\n"), showCursor=True))
                 self.updateList(self._items)
                 self.printList()
 

@@ -1,8 +1,8 @@
-from readchar import readkey, readchar, key
+from cli_utils import moveCursor, cls, lowercaseKey, waitForEnter
 from typing import Callable, Any, Optional
+from readchar import readkey, key
 from math import ceil as roundup
 import cursor
-import sys
 import os
 
 DEFAULTHELP = """
@@ -22,39 +22,6 @@ Controls:
     - '?'        -> display current help page.
     - escape     -> quit application.
 """ 
-
-def moveCursor(y: int, x: int):
-    """Function for moving the cursor to a different position in the console.
-
-    Args:
-        y (int): column in console (characters).
-        x (int): line in console (characters).
-
-    """
-
-    sys.stdout.write("\033[%d;%dH" % (max(y, 0), max(x, 0)))
-
-# clear screen function
-cls = lambda: os.system('cls' if os.name=='nt' else 'clear')
-
-def lowercaseKey(key: str):
-    """Transforms a key to lowercase without affecting multi-character keys like the arrows.
-
-    Args:
-        key (str): key to convert.
-
-    Returns:
-        str: key converted to lowercase.
-        
-    """
-
-    return key.lower() if len(key) == 1 else key
-
-def waitForEnter():
-    """Waits for the enter key to be pressed (for "Press enter to continue" messages)."""
-    while not readchar() == key.ENTER:
-        pass
-
 
 class ConsoleListInterface:
     """Class for interacting with the console list, an interface for selecting and searching in a list printed to the console.

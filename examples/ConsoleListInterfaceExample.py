@@ -1,7 +1,4 @@
-import sys
-sys.path.append('..')
-
-from ConsoleListInterface import ConsoleListInterface # pyright: ignore[reportMissingImports]
+from Console
 from readchar import key
 import sys
 import os

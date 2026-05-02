@@ -1,4 +1,4 @@
-from ConsoleListInterface.Interface import ConsoleListInterface
+from ConsoleListInterface import ConsoleListInterface
 from time import sleep, time
 from random import random
 

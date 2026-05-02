@@ -1,9 +1,14 @@
 ## Description
-A class for interacting with a list of items in the console/terminal.
+A library for interacting with a list of items in the console/terminal.
 
-## Requirements
+## Requirements (installed on setup)
 - The [python-readchar](https://pypi.org/project/readchar/) library for reading keystrokes;
 - The [cursor](https://pypi.org/project/cursor/) library for hiding the cursor in console.
+
+## Setup 
+Simply run 'pip3 install .' in the root directory, and pip will install this library as an importable Python package. <br>
+The package name is 'ConsoleListInterface', and the console interface class and the additional functions can be found in the 'ConsoleListInterface.Interface' import. <br>
+Uninstall with 'pip3 uninstall ConsoleListInterface.
 
 ## Additional Functions
 - moveCursor(y: int, x: int) -> places the console cursor at given position (implementation might not work in all console environments);

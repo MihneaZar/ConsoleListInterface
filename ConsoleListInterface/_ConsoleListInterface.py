@@ -29,7 +29,7 @@ class ConsoleListInterface:
     The default commands are explained in the DEFAULTHELP help page.
     Special commands (enter, escape) can be changed through the specialCommands parameter. 
 
-    While in most cases it would make more sense for the list items to be sorted, it does not have to be.
+    While in most cases it would make more sense for the list items to be sorted, they do not have to be.
     The list can have repeat values, next to each other or otherwise.
     Any newlines in item names are ignored because that causes undefined behaviour.
 
@@ -37,11 +37,15 @@ class ConsoleListInterface:
     """
 
     # the ( -> /    ) before list items
-    _SPACESBEFORE = 4  
+    _SPACESBEFORE = 4 
 
-    _INTERNALCOMMANDS = [key.UP, key.DOWN, key.LEFT, key.RIGHT, key.CTRL_F, '\\', key.CTRL_N, key.CTRL_R, key.DELETE, key.CTRL_U, '=', '-', '?']
-
+    # the minimum width of item names
     _MINNAMEWIDTH = 8
+
+    # the commands recognized by default by the interface
+    # the interface will ignore them if they are passed to the specialCommands list
+    # and they can be rebound to other keys through the rebindCommand dictionary
+    _INTERNALCOMMANDS = [key.UP, key.DOWN, key.LEFT, key.RIGHT, key.CTRL_F, '\\', key.CTRL_N, key.CTRL_R, key.DELETE, key.CTRL_U, '=', '-', '?']
 
 
     def __init__(self, items: list[str] = [], specialCommands: list[str] = [key.ENTER, key.ESC], helpPage: str = DEFAULTHELP, startPos: int = 0, 

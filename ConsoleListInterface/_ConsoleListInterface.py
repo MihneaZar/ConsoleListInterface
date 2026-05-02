@@ -92,10 +92,10 @@ class ConsoleListInterface:
         if items == None:
             items = []
 
-        self._startPrintLine = 1 # changed to number of lines of text + 1 if text is set at the top
+        self._topText = ""
 
         self._consoleWidth   = os.get_terminal_size()[0] 
-        self._itemsPerColumn = os.get_terminal_size()[1] - 2 - self._startPrintLine + 1 # help page message, then startPrintLine
+        self._itemsPerColumn = os.get_terminal_size()[1] - 2 - (self._topText.count('\n') + 1) + 1 # help page message, then startPrintLine
 
         self._separateInteractionPos = max(int(self._itemsPerColumn / 2 - 4), 0)
         
@@ -138,13 +138,15 @@ class ConsoleListInterface:
         As long as all printing to console is done only through the same ConsoleListInterface, the methods reprint the list automatically every time it is necessary. 
         Therefore, this method should only be used if printing is done from a different source, including another ConsoleListInterface object.
         """
+        cls()
+        print(self._topText)
 
         # console size has been changed
         if (self._consoleWidth != os.get_terminal_size()[0]) or (self._itemsPerColumn != os.get_terminal_size()[1] - 2):
             currPos = (self._column - 1) * self._itemsPerColumn + self._line - 1
 
             self._consoleWidth   = os.get_terminal_size()[0]
-            self._itemsPerColumn = os.get_terminal_size()[1] - 2 - self._startPrintLine + 1 # help page message, then startPrintLine
+            self._itemsPerColumn = os.get_terminal_size()[1] - 2 - (self._topText.count('\n') + 1) + 1 # help page message, then startPrintLine
             self._separateInteractionPos = max(int(self._itemsPerColumn / 2 - 4), 0)
             
             self._totalColumns     = roundup(len(self._items) / self._itemsPerColumn)
@@ -166,7 +168,6 @@ class ConsoleListInterface:
 
         focusItems = self._items[(self._leftmostColumn - 1) * self._itemsPerColumn:]
 
-        cls()
         printColumn = 1
         printLine   = 1
 
@@ -174,7 +175,7 @@ class ConsoleListInterface:
             if self._maxColumns < printColumn:
                 break
         
-            moveCursor(printLine + self._startPrintLine - 1, (printColumn - 1) * (self._SPACESBEFORE + self._maxNameWidth))
+            moveCursor(printLine + (self._topText.count('\n') + 1) - 1, (printColumn - 1) * (self._SPACESBEFORE + self._maxNameWidth))
 
             print(f'    {self._printFunc(item, self._maxNameWidth)}')
             
@@ -183,7 +184,7 @@ class ConsoleListInterface:
                 printColumn += 1
                 printLine    = 1
         
-        moveCursor(self._itemsPerColumn + 2 + self._startPrintLine - 1, 0)
+        moveCursor(self._itemsPerColumn + 2 + (self._topText.count('\n') + 1) - 1, 0)
 
         if not self._disableHelp:
             print(f"Type '{self._commandBind['?']}' for help page.", end='', flush=True)
@@ -206,12 +207,12 @@ class ConsoleListInterface:
             self.printList()
 
         while (True):
-            moveCursor(self._line + self._startPrintLine - 1, (self._column - self._leftmostColumn) * (self._SPACESBEFORE + self._maxNameWidth))
+            moveCursor(self._line + (self._topText.count('\n') + 1) - 1, (self._column - self._leftmostColumn) * (self._SPACESBEFORE + self._maxNameWidth))
             print(" -> ")
             # print(f'{self._column} {self._line}')                             # debugging, current column and line
             # print(f'{self._leftmostColumn} {self._column}')                   # debugging, leftmost column and current column
             # print((self._column - 1) * self._itemsPerColumn + self._line - 1) # debugging, current position in list
-            moveCursor(self._line + self._startPrintLine - 1, (self._column - self._leftmostColumn) * (self._SPACESBEFORE + self._maxNameWidth))
+            moveCursor(self._line + (self._topText.count('\n') + 1) - 1, (self._column - self._leftmostColumn) * (self._SPACESBEFORE + self._maxNameWidth))
 
             try:
                 command = lowercaseKey(readkey())
@@ -508,7 +509,7 @@ class ConsoleListInterface:
 
         """
 
-        moveCursor(self._line + self._startPrintLine - 1, (self._column - self._leftmostColumn) * (self._SPACESBEFORE + self._maxNameWidth))
+        moveCursor(self._line + (self._topText.count('\n') + 1) - 1, (self._column - self._leftmostColumn) * (self._SPACESBEFORE + self._maxNameWidth))
         print("    ")
 
         if newPos < 0:
@@ -527,7 +528,7 @@ class ConsoleListInterface:
         if savedLeftMost != self._leftmostColumn:
             self.printList()
         
-        moveCursor(self._line + self._startPrintLine - 1, (self._column - self._leftmostColumn) * (self._SPACESBEFORE + self._maxNameWidth))
+        moveCursor(self._line + (self._topText.count('\n') + 1) - 1, (self._column - self._leftmostColumn) * (self._SPACESBEFORE + self._maxNameWidth))
         print(" -> ")
 
 
@@ -538,10 +539,8 @@ class ConsoleListInterface:
             text (str): text to be displayed.
          
         """
-        moveCursor(0, 0)
-        print(text)
-
-        self._startPrintLine = text.count('\n') + 1
+        self._topText = text
+        self._itemsPerColumn = os.get_terminal_size()[1] - 2 - (self._topText.count('\n') + 1) + 1 # help page message, then startPrintLine
         self.printList()
 
     def setTitle(self, title = str):

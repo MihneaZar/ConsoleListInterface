@@ -18,3 +18,7 @@ A class for interacting with a list of items in the console/terminal.
 ## Extra Info
 Class functions are explained in the comments. <br>
 Only tested on Windows 11.
+
+-------------------------------------------------------------------------
+
+*Copyright (c) 2026 Mihnea Bogdan Zarojanu*

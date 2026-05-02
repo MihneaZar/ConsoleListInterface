@@ -352,7 +352,7 @@ class ConsoleListInterface:
                     self.printList()
 
                     # returns command and the position of the renamed item
-                    return command, (self._column - 1) * self._itemsPerColumn + self._line - 1
+                    return command, pos
 
             # deleting selected item
             if command == self._commandBind[key.DELETE]:
@@ -369,7 +369,7 @@ class ConsoleListInterface:
 
                     # returns command and the position of the deleted item in the non-updated list
                     # ONLY if it actually deletes
-                    return command, (self._column - 1) * self._itemsPerColumn + self._line - 1
+                    return command, pos
 
             # making item names longer
             if command == self._commandBind['='] and 1 < self._maxColumns:

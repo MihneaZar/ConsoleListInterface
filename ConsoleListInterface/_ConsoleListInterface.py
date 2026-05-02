@@ -48,8 +48,27 @@ class ConsoleListInterface:
     _INTERNALCOMMANDS = [key.UP, key.DOWN, key.LEFT, key.RIGHT, key.CTRL_F, '\\', key.CTRL_N, key.CTRL_R, key.DELETE, key.CTRL_U, '=', '-', '?']
 
 
+    def defaultPrintFunc(item, maxNameWidth):
+        """Default printing function for item names.
+
+        Args:
+            item (str): the full name of the item.
+            maxNameWidth: the total number of characters that the printed name can have (otherwise it will get cut-off).
+
+        Returns:
+            The truncated name.
+
+        """
+        if len(item) <= maxNameWidth:
+            itemName = item
+        else:
+            itemName = item[:maxNameWidth - 1] + '-'
+
+        return itemName
+
+
     def __init__(self, items: list[str] = [], specialCommands: list[str] = [key.ENTER, key.ESC], helpPage: str = DEFAULTHELP, startPos: int = 0, 
-                 printFunc: Optional[Callable[[str, int], int]] = None, rebindCommand: dict[str, str] = {}, disableHelp: bool = False):
+                 printFunc: Callable[[str, int], int] = defaultPrintFunc, rebindCommand: dict[str, str] = {}, disableHelp: bool = False):
         """Intializes console interface.
 
         Args:
@@ -58,7 +77,7 @@ class ConsoleListInterface:
                                          Additionally, internal commands passed in this list will be ignored by the interface and returned by the 'interact' method.
             helpPage (str): user instructions for all application commands.
             startPos (int): current position in list, by default the first element.
-            printFunc ((str, int) -> str): custom function for printing the item names (str is the name and int is the max accepted length).
+            printFunc ((str, int) -> str): custom function for printing the item names (str is the name and int is the cut-off for the name length).
             rebindCommand (str: str): dictionary for rebinding internal commands to other keys (e.g. rebindCommand[key.CTRL_F] = key.CTRL_S will bind searching by string to ctrl+s instead of ctrl+f). 
                                       Binding multiple commands to the same key will lead to only one of them being detected.
             disableHelp: disable the "Type '?' for help page." message and help page printing.
@@ -72,7 +91,8 @@ class ConsoleListInterface:
 
         self._consoleWidth   = os.get_terminal_size()[0] 
         self._itemsPerColumn = os.get_terminal_size()[1] - 2
-        self._separateInteractionPos        = max(int(self._itemsPerColumn / 2 - 4), 0)
+
+        self._separateInteractionPos = max(int(self._itemsPerColumn / 2 - 4), 0)
         
         self._maxColumns   = 3
         self._maxNameWidth = int(self._consoleWidth / self._maxColumns) - self._SPACESBEFORE
@@ -151,14 +171,7 @@ class ConsoleListInterface:
         
             moveCursor(printLine, (printColumn - 1) * (self._SPACESBEFORE + self._maxNameWidth))
 
-            if self._printFunc:
-                print(f'    {self._printFunc(item, self._maxNameWidth)}')
-            
-            else:
-                itemName = item[0:self._maxNameWidth - 1]
-                if self._maxNameWidth <= len(item):
-                    itemName += '-'
-                print(f'    {itemName}')
+            print(f'    {self._printFunc(item, self._maxNameWidth)}')
             
             printLine += 1
             if self._itemsPerColumn < printLine:
@@ -511,47 +524,32 @@ class ConsoleListInterface:
         
         moveCursor(self._line, (self._column - self._leftmostColumn) * (self._SPACESBEFORE + self._maxNameWidth))
         print(" -> ")
-        
-    def updatePrint(self, newPrintFunc: Optional[Callable[[str, int], int]] = None):
-        """Change printing function for items.
+
+
+    def configure(self, printFunc: Optional[Callable[[str, int], int]] = None, specialCommands: list[str] = None, rebindCommand: dict[str, str] = None, helpPage: str = None):
+        """Change one or more of the configurable functionalities.
 
         Args:
-            newPrintFunc ((str, int) -> str): the new function for printing the item names (str is the name and int is the max accepted length).
+            specialCommands (list[str]): new list of special commands, which will overwrite the original special commands list.
+            helpPage (str): new user instructions for all application commands.
+            printFunc ((str, int) -> str): the new function for printing the item names (str is the name and int is the cut-off for the name length).
+                                           Reset the printing function by configuring it to the 'ConsoleListInterface.defaultPrintFunc' function. 
+            rebindCommand: dict[str, str]: dictionary for rebinding internal commands (commands not in rebindCommand remain untouched).
 
         """
-        self._printFunc = newPrintFunc
-    
-    def updateSpecialCommands(self, newSpecialCommands: list[str]):
-        """Change the special command list (overwritting the original one).
 
-        Args:
-            newSpecialCommands (list[str]): new list of special commands, with the same function as the one in the class initializer.
+        if specialCommands: 
+            self._specialCommands = specialCommands
+
+        if helpPage:
+            self._helpPage = helpPage
         
-        """
+        if printFunc:
+            self._printFunc = printFunc
 
-        self._specialCommands = [lowercaseKey(command) for command in newSpecialCommands]
-
-    def updateRebinds(self, rebindCommand: dict[str, str]):
-        """Update the rebinds of internal commands.
-        Commands not in rebindCommand remain untouched.
-
-        Args:
-            rebindCommand: dict[str, str]: dictionary for rebinding internal commands, same as the one in the class initializer.
-        
-        """
-
-        self._commandBind     = {command: (self._commandBind[command] if command not in rebindCommand else lowercaseKey(rebindCommand[command])) for command in self._commandBind}
-        self._actualCommands  = self._commandBind.values() # all the values that internal commands are bound to
-
-    def updateHelpPage(self, newHelpPage: str):
-        """Update the help page of the application. 
-
-        Args:
-            newHelpPage (str): new user instructions for all application commands.
-        
-        """
-
-        self._helpPage = newHelpPage
+        if rebindCommand:
+            self._commandBind     = {command: (self._commandBind[command] if command not in rebindCommand else lowercaseKey(rebindCommand[command])) for command in self._commandBind}
+            self._actualCommands  = self._commandBind.values() # all the values that internal commands are bound to
 
     def toggleHelpPage(self, disableHelp: Optional[bool] = None):
         """Change whether the "Type '?' for help page." message is shown and the help page is printed.
@@ -566,6 +564,7 @@ class ConsoleListInterface:
             self._disableHelp = disableHelp
         else:
             self._disableHelp = not self._disableHelp
+
 
     def exitInterface(self):
         """Clears screen, shows cursor, moving it to the beginning of the console."""

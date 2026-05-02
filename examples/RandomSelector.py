@@ -1,7 +1,4 @@
-import sys
-sys.path.append('C:\\Users\\Mihnea\\Desktop\\Random thoughts\\Cool stuff\\ConsoleListInterface')
-
-from ConsoleListInterface import ConsoleListInterface # pyright: ignore[reportMissingImports]
+from ConsoleListInterface.Interface import ConsoleListInterface
 from time import sleep, time
 from random import random
 

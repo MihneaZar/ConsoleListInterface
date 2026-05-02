@@ -1,4 +1,4 @@
-from cli_utils import moveCursor, cls, lowercaseKey, waitForEnter
+from ConsoleListInterface.cli_utils import moveCursor, cls, lowercaseKey, waitForEnter
 from typing import Callable, Any, Optional
 from readchar import readkey, key
 from math import ceil as roundup

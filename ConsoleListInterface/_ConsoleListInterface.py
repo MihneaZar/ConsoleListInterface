@@ -139,6 +139,7 @@ class ConsoleListInterface:
         Therefore, this method should only be used if printing is done from a different source, including another ConsoleListInterface object.
         """
         cls()
+        moveCursor(0, 0)
         print(self._topText)
 
         # console size has been changed

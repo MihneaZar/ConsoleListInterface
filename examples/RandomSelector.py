@@ -21,6 +21,9 @@ def main():
 
     console.updateList(name_list)
 
+    console.setTitle("Random Selector")
+    console.setTopText("Selecting random item:\n\n")
+
     if name_list:
         pos = 0
         start = time()

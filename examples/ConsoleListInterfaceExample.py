@@ -1,4 +1,4 @@
-from ConsoleListInterface.Interface import ConsoleListInterface
+from ConsoleListInterface import ConsoleListInterface
 from readchar import key
 import sys
 import os

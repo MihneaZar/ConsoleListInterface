@@ -1,4 +1,4 @@
-from ConsoleListInterface._cli_utils import moveCursor, cls, lowercaseKey, waitForEnter
+from ConsoleListInterface._cli_utils import moveCursor, cls, lowercaseKey, waitForEnter, setTitle
 from typing import Callable, Any, Optional
 from readchar import readkey, key
 from math import ceil as roundup
@@ -543,6 +543,15 @@ class ConsoleListInterface:
 
         self._startPrintLine = text.count('\n') + 1
         self.printList()
+
+    def setTitle(self, title = str):
+        """Set title for the terminal console.
+        
+        Args:
+            title (str): title for the terminal console.
+
+        """
+        setTitle(title)
 
     def configure(self, printFunc: Optional[Callable[[str, int], int]] = None, specialCommands: list[str] = None, rebindCommand: dict[str, str] = None, helpPage: str = None):
         """Change one or more of the configurable functionalities.

@@ -540,6 +540,11 @@ class ConsoleListInterface:
             text (str): text to be displayed.
          
         """
+        if not text:
+            text = ""
+        
+        text += '\n'
+
         self._topText = text
         self._itemsPerColumn = os.get_terminal_size()[1] - 2 - (self._topText.count('\n') + 1) + 1 # help page message, then startPrintLine
         self.printList()

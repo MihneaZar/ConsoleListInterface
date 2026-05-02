@@ -41,6 +41,8 @@ class ConsoleListInterface:
 
     _INTERNALCOMMANDS = [key.UP, key.DOWN, key.LEFT, key.RIGHT, key.CTRL_F, '\\', key.CTRL_N, key.CTRL_R, key.DELETE, key.CTRL_U, '=', '-', '?']
 
+    _MINNAMEWIDTH = 8
+
 
     def __init__(self, items: list[str] = [], specialCommands: list[str] = [key.ENTER, key.ESC], helpPage: str = DEFAULTHELP, startPos: int = 0, 
                  printFunc: Optional[Callable[[str, int], int]] = None, rebindCommand: dict[str, str] = {}, disableHelp: bool = False):
@@ -366,7 +368,7 @@ class ConsoleListInterface:
                 continue
 
             # making item names shorter
-            if command == self._commandBind['-'] and 8 <= self._maxNameWidth:
+            if command == self._commandBind['-'] and self._MINNAMEWIDTH <= self._maxNameWidth:
                 # changing the width of item names to leave space for an additional column
                 self._maxColumns  += 1
                 self._maxNameWidth = int(self._consoleWidth / self._maxColumns) - self._SPACESBEFORE

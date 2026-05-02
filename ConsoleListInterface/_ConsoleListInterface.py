@@ -68,7 +68,7 @@ class ConsoleListInterface:
 
         self._consoleWidth   = os.get_terminal_size()[0] 
         self._itemsPerColumn = os.get_terminal_size()[1] - 2
-        self._infoPos        = max(int(self._itemsPerColumn / 2 - 4), 0)
+        self._separateInteractionPos        = max(int(self._itemsPerColumn / 2 - 4), 0)
         
         self._maxColumns   = 3
         self._maxNameWidth = int(self._consoleWidth / self._maxColumns) - self._SPACESBEFORE
@@ -116,7 +116,7 @@ class ConsoleListInterface:
 
             self._consoleWidth   = os.get_terminal_size()[0]
             self._itemsPerColumn = os.get_terminal_size()[1] - 2
-            self._infoPos        = max(int(self._itemsPerColumn / 2 - 4), 0)
+            self._separateInteractionPos        = max(int(self._itemsPerColumn / 2 - 4), 0)
             
             self._totalColumns     = roundup(len(self._items) / self._itemsPerColumn)
             self._lastColumnHeight = len(self._items) % self._itemsPerColumn
@@ -224,7 +224,7 @@ class ConsoleListInterface:
                 reprint = False
                 if command == self._commandBind[key.CTRL_F]:
                     cls()
-                    moveCursor(self._infoPos, 0)
+                    moveCursor(self._separateInteractionPos, 0)
                     cursor.show()
                     self._searchStr = input("String to search by:\n").lower()
                     cursor.hide()
@@ -402,7 +402,7 @@ class ConsoleListInterface:
             message (str): message to print.
             function (Any -> Any): function for interaction.
             functionArgs (Any): arguments for function.
-            startAtTop (bool): instead of starting at infoPos, the printing starts at the top of the console.
+            startAtTop (bool): instead of starting at _separateInteractionPos, the printing starts at the top of the console.
             showCursor (bool): show cursor during interaction.
 
         """
@@ -415,7 +415,7 @@ class ConsoleListInterface:
         if startAtTop:
             moveCursor(0, 0)
         else:
-            moveCursor(self._infoPos, 0)
+            moveCursor(self._separateInteractionPos, 0)
 
         if message:
             print(message)

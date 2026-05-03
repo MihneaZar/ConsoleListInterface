@@ -37,7 +37,7 @@ class MenuInterface(ConsoleListInterface):
         Args:
             optionName (str): the name of the option.
             maxNameWidth (int): the total number of characters that the printed name can have (otherwise it will get cut-off).
-            currentMenu (str: dict): the structure of the current submenu (since it's a dictionary, Python passes it by reference - sort-of: https://stackoverflow.com/a/15078615/31936209).
+            currentMenu (str: dict): the structure of the current menu (since it's a dictionary, Python passes it by reference - sort-of: https://stackoverflow.com/a/15078615/31936209).
             submenuColor (str | (int, int, int)): the color for printing submenu names.
             optionColor (str | (int, int, int)): the color for printing option names. 
             ignoreMaxWidth (bool): since the menus aren't likely to have more options than the height of the terminal, the cut-off is ignored by default.   
@@ -131,10 +131,10 @@ class MenuInterface(ConsoleListInterface):
                 
     
     def changeOptions(self, path: list[str], changes: dict[str, str]):
-        """Change the name of options for a submenu.
+        """Change the name of options for a menu.
 
         Args:
-            path (list[str]): path to the submenu to change.
+            path (list[str]): path to the menu to change.
             changes (str: str): dictionary with the old names of the options as the keys, and the new names as values.
                                 Only needed for the options whose name changes.
 
@@ -156,6 +156,15 @@ class MenuInterface(ConsoleListInterface):
         if path == self._currentPath[:-1]:
             self._currentPath[-1] = changes[self._currentPath[-1]]
             self.setTopText(colored(self._currentPath[-1], self._submenuColor) + '\n')
+
+    def changeMainMenu(self, newMainMenu: str):
+        """Change the title of the Main Menu.
+
+        Args:
+            newMainMenu (str): the new title for the main menu.
+        
+        """
+        self._menuStructure[newMainMenu] = self._menuStructure.pop(next(iter(self._menuStructure.keys())))
 
     
     def selectOption(selectedOption: str, newSelectedOption: str, options: list[str], padding: bool = True, selectText: str = "(selected)"):

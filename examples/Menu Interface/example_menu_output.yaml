@@ -6,13 +6,28 @@ Main Menu:
     Play Chapter 3: null
   Settings:
     Difficulty:
+      This is to show that you can have selectable options *and* submenus in the same menu:
+        This: null
+        is: null
+        Another: null
+        Level: null
       Hard   (selected): null
       Normal: null
       Easy: null
     Sound (70%):
+      This is to show that you can have selectable options *and* submenus in the same menu:
+        This: null
+        is: null
+        Another: null
+        Level: null
       Raise Volume: null
       Lower Volume: null
     Extras:
+      This is to show that you can have selectable options *and* submenus in the same menu:
+        This: null
+        is: null
+        Another: null
+        Level: null
       Big Head Mode x: null
       Invincibility: null
       Score x10     x: null

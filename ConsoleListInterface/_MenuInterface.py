@@ -46,7 +46,7 @@ class MenuInterface(ConsoleListInterface):
             optionName = optionName
         else:
             optionName = optionName[:maxNameWidth - 1] + '-'
-        optionName = colored(optionName, 'blue') if isMenu else optionName
+        optionName = colored(optionName, 'blue') if isMenu else colored(optionName, 'light_blue')
 
         return optionName
 
@@ -55,10 +55,10 @@ class MenuInterface(ConsoleListInterface):
         """Intializes console interface.
 
         Args:
-            menuStructure: the structure of the menu and its submenus, in the form of a dictionary.
-                           The first level key represents the Main Menu title.
-                           A submenu is represented by a (str: dict) value.
-                           An option for a menu is represented by a (str: None) value.
+            menuStructure (str: dict): the structure of the menu and its submenus, in the form of a dictionary.
+                                       The first level key represents the Main Menu title.
+                                       A submenu is represented by a (str: dict) value.
+                                       An option for a menu is represented by a (str: None) value.
 
         Returns: 
             A MenuInterface object.
@@ -75,7 +75,7 @@ class MenuInterface(ConsoleListInterface):
         super(MenuInterface, self).__init__(items=list(self._currentMenu.keys()), specialCommands=self._SPECIALCOMMANDS, helpPage=self._HELPPAGE, 
                                             printFunc=lambda optionName, maxNameWidth: MenuInterface._menuPrintFunc(optionName, maxNameWidth, self._currentMenu), rebindCommand=rebindUnused)
 
-        self.setTopText(next(iter(menuStructure.keys())) + '\n') # Main Menu name
+        self.setTopText(colored(next(iter(menuStructure.keys())), 'blue') + '\n') # Main Menu name
     
 
     def interactWithMenu(self):
@@ -100,11 +100,10 @@ class MenuInterface(ConsoleListInterface):
                 self._currentPath.append(optionName) 
                 self.updateList(list(self._currentMenu.keys()))
                 self.updatePos(0)
-                self.setTopText(optionName + '\n')
+                self.setTopText(colored(optionName, 'blue') + '\n')
 
             if command == key.BACKSPACE:
-                if not self._currentPath:
-                    self.exitInterface()
+                if self._currentPath == []:
                     return self._currentPath
 
                 submenuName = self._currentPath.pop()
@@ -116,6 +115,13 @@ class MenuInterface(ConsoleListInterface):
 
                 self.updateList(list(self._currentMenu.keys()))
                 self.updatePos(self._items.index(submenuName))
-                self.setTopText(menuName + '\n')
+                self.setTopText(colored(menuName, 'blue') + '\n')
                 
     
+    # def changeOptions(self, path: list[str], changes: dict[str, str]):
+    #     """Change the name of options for a submenu.
+
+    #     Args:
+    #         path  
+
+    #     """

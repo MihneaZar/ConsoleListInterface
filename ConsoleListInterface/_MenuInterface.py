@@ -64,11 +64,8 @@ class MenuInterface(ConsoleListInterface):
             A MenuInterface object.
 
         """
-        # if startPath is None:
-            # startPath = []
 
         self._menuStructure = menuStructure
-        # self._currentPath   = startPath
         self._currentPath   = []
         self._currentMenu   = next(iter(menuStructure.values())) # obtaining Main Menu
         

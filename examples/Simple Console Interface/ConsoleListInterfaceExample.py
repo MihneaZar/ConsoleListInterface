@@ -7,10 +7,10 @@ HOMEPATH = os.path.dirname(os.path.realpath(__file__))
 sys.stderr = open(f'{HOMEPATH}/errors.txt', "a")
 
 def main():
-    console = ConsoleListInterface([line.replace('\n', '') for line in open("example.txt").readlines()])
+    console = ConsoleListInterface([line.replace('\n', '') for line in open("../example.txt").readlines()])
 
     console.setTitle("Console List")
-    console.setTopText("Select an item:\n\n")
+    console.setTopText("Select an item:\n")
 
     while True:
         command, curr_pos = console.interact()

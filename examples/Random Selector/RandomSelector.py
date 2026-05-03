@@ -17,12 +17,12 @@ def main():
     console = ConsoleListInterface(disableHelp=True)
 
     # name_list = console.separateInteraction(function=get_names, startAtTop=True, showCursor=True)
-    name_list = [line.replace('\n', '') for line in open("example.txt").readlines()]
+    name_list = [line.replace('\n', '') for line in open("../example.txt").readlines()]
 
     console.updateList(name_list)
 
     console.setTitle("Random Selector")
-    console.setTopText("Selecting random item:\n\n")
+    console.setTopText("Selecting random item:\n")
 
     if name_list:
         pos = 0

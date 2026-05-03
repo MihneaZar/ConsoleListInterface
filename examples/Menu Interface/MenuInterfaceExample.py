@@ -23,13 +23,25 @@ def main():
         if 'Start' in path:
             # note that this outputs options as '{OptionName}: null'
             # perhaps it's better to use json 
-            yaml.safe_dump(menu.getMenuStructure(), open("example_menu_output.yaml", 'w'), sort_keys=False)
+            yaml.safe_dump(menu.getMenuStructure(), open("example_menu_output.yaml", 'w'), indent=4, sort_keys=False)
+
+            # removing null from output
+            yaml_text = "".join(open("example_menu_output.yaml", 'r').readlines()).replace('null', '')
+            with open("example_menu_output.yaml", 'w') as file:
+                file.write(yaml_text)
+
             menu.separateInteraction(message="Starting game...\n")
 
         if path[-1].startswith("Play"):
             # note that this outputs options as '{OptionName}: null'
             # perhaps it's better to use json 
-            yaml.safe_dump(menu.getMenuStructure(), open("example_menu_output.yaml", 'w'), sort_keys=False)
+            yaml.safe_dump(menu.getMenuStructure(), open("example_menu_output.yaml", 'w'), indent=4, sort_keys=False)
+
+            # removing null from output
+            yaml_text = "".join(open("example_menu_output.yaml", 'r').readlines()).replace('null', '')
+            with open("example_menu_output.yaml", 'w') as file:
+                file.write(yaml_text)
+
             chapter_name = path[-1][len("Play "):]
             menu.separateInteraction(message=f"Playing {chapter_name}...\n")
         
@@ -84,7 +96,12 @@ def main():
         if 'Quit' in path:
             # note that this outputs options as '{OptionName}: null'
             # perhaps it's better to use json 
-            yaml.safe_dump(menu.getMenuStructure(), open("example_menu_output.yaml", 'w'), sort_keys=False)
+            yaml.safe_dump(menu.getMenuStructure(), open("example_menu_output.yaml", 'w'), indent=4, sort_keys=False)
+
+            # removing null from output
+            yaml_text = "".join(open("example_menu_output.yaml", 'r').readlines()).replace('null', '')
+            with open("example_menu_output.yaml", 'w') as file:
+                file.write(yaml_text)
             menu.exitInterface()
             return
 

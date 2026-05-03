@@ -99,13 +99,13 @@ class ConsoleListInterface:
 
         self._separateInteractionPos = max(int(self._itemsPerColumn / 2 - 4), 0)
         
-        self._maxColumns   = self._STARTCOLUMNNO
-        self._maxNameWidth = int(self._consoleWidth / self._maxColumns) - self._SPACESBEFORE
+        self._shownColumns = self._STARTCOLUMNNO
+        self._maxNameWidth = int(self._consoleWidth / self._shownColumns) - self._SPACESBEFORE
 
         self._column = int((startPos) / self._itemsPerColumn) + 1
         self._line   = (startPos) % self._itemsPerColumn + 1
         
-        self._leftmostColumn = max(self._column - self._maxColumns + 1, 1)
+        self._leftmostColumn = max(self._column - self._shownColumns + 1, 1)
 
         self._items           = [item.replace('\n', '') for item in items] # accidental '\n' fucks up printing
         self._specialCommands = [lowercaseKey(command) for command in specialCommands]
@@ -160,10 +160,10 @@ class ConsoleListInterface:
                 self._totalColumns     = 1
                 self._lastColumnHeight = 1
 
-            self._maxColumns = int(self._consoleWidth / (self._SPACESBEFORE + self._maxNameWidth))
+            self._shownColumns = int(self._consoleWidth / (self._SPACESBEFORE + self._maxNameWidth))
 
-            if self._maxColumns <= (self._column - self._leftmostColumn):
-                self._leftmostColumn = self._column - self._maxColumns + 1
+            if self._shownColumns <= (self._column - self._leftmostColumn):
+                self._leftmostColumn = self._column - self._shownColumns + 1
 
             self.updatePos(currPos)
 
@@ -173,7 +173,7 @@ class ConsoleListInterface:
         printLine   = 1
 
         for item in focusItems:
-            if self._maxColumns < printColumn:
+            if self._shownColumns < printColumn:
                 break
         
             moveCursor(printLine + (self._topText.count('\n') + 1) - 1, (printColumn - 1) * (self._SPACESBEFORE + self._maxNameWidth))
@@ -302,8 +302,8 @@ class ConsoleListInterface:
 
                 if self._column < 1:
                     self._column = self._totalColumns
-                    if self._maxColumns < self._column:
-                        self._leftmostColumn = self._totalColumns - self._maxColumns + 1
+                    if self._shownColumns < self._column:
+                        self._leftmostColumn = self._totalColumns - self._shownColumns + 1
                         self.printList()
                     
                     # went to the last column from a position lower than its height
@@ -323,7 +323,7 @@ class ConsoleListInterface:
                         self._leftmostColumn = 1
                         self.printList()
 
-                if self._maxColumns <= (self._column - self._leftmostColumn):
+                if self._shownColumns <= (self._column - self._leftmostColumn):
                     self._leftmostColumn += 1
                     self.printList()
 
@@ -379,12 +379,12 @@ class ConsoleListInterface:
                     return command, pos
 
             # making item names longer
-            if command == self._commandBind['='] and 1 < self._maxColumns:
+            if command == self._commandBind['='] and 1 < self._shownColumns:
                 # changing the width of item names to maximum possible if we have one less column
-                self._maxColumns  -= 1
-                self._maxNameWidth = int(self._consoleWidth / self._maxColumns) - self._SPACESBEFORE
+                self._shownColumns -= 1
+                self._maxNameWidth  = int(self._consoleWidth / self._shownColumns) - self._SPACESBEFORE
 
-                if self._maxColumns <= (self._column - self._leftmostColumn):
+                if self._shownColumns <= (self._column - self._leftmostColumn):
                     self._leftmostColumn += 1
 
                 self.printList()
@@ -394,8 +394,8 @@ class ConsoleListInterface:
             # making item names shorter
             if command == self._commandBind['-'] and self._MINNAMEWIDTH <= self._maxNameWidth:
                 # changing the width of item names to leave space for an additional column
-                self._maxColumns  += 1
-                self._maxNameWidth = int(self._consoleWidth / self._maxColumns) - self._SPACESBEFORE
+                self._shownColumns += 1
+                self._maxNameWidth  = int(self._consoleWidth / self._shownColumns) - self._SPACESBEFORE
 
                 self.printList()
 
@@ -524,7 +524,7 @@ class ConsoleListInterface:
 
         savedLeftMost = self._leftmostColumn
         
-        self._leftmostColumn = max(self._column - self._maxColumns + 1, 1)
+        self._leftmostColumn = max(self._column - self._shownColumns + 1, 1)
 
         if savedLeftMost != self._leftmostColumn:
             self.printList()

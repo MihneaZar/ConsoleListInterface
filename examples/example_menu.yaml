@@ -1,0 +1,23 @@
+Main Menu:
+    Start:
+    Chapters:
+        Chapter 1:
+        Chapter 2:
+        Chapter 3:
+
+    Settings:
+        Difficulty:
+            Hard:
+            Medium:
+            Easy:
+
+        Sound: 
+            Lower Volume:
+            Raise Volume:
+
+        Picture:
+            Fullscreen:
+            Windowed:
+            Borderless:
+
+    Quit:

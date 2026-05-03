@@ -1,23 +1,23 @@
 Main Menu:
     Start:
     Chapters:
-        Chapter 1:
-        Chapter 2:
-        Chapter 3:
+        Play Chapter 1:
+        Play Chapter 2:
+        Play Chapter 3:
 
     Settings:
         Difficulty:
             Hard:
-            Medium:
+            Normal (selected):
             Easy:
 
-        Sound: 
-            Lower Volume:
+        Sound (50%): 
             Raise Volume:
+            Lower Volume:
 
-        Picture:
-            Fullscreen:
-            Windowed:
-            Borderless:
+        Extras:
+            Big Head Mode:
+            Invincibility:
+            Score x10:
 
     Quit:

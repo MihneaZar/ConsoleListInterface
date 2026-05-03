@@ -1,0 +1,19 @@
+Main Menu:
+  Start: null
+  Chapters:
+    Play Chapter 1: null
+    Play Chapter 2: null
+    Play Chapter 3: null
+  Settings:
+    Difficulty:
+      Hard   (selected): null
+      Normal: null
+      Easy: null
+    Sound (70%):
+      Raise Volume: null
+      Lower Volume: null
+    Extras:
+      Big Head Mode x: null
+      Invincibility: null
+      Score x10     x: null
+  Quit: null

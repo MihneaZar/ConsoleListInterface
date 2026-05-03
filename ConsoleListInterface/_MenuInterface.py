@@ -93,7 +93,6 @@ class MenuInterface(ConsoleListInterface):
 
                 # no submenu means option was selected
                 if not self._currentMenu[optionName]:
-                    self.exitInterface()
                     return self._currentPath + [optionName]
 
                 self._currentMenu = self._currentMenu[optionName]
@@ -118,10 +117,121 @@ class MenuInterface(ConsoleListInterface):
                 self.setTopText(colored(menuName, 'blue') + '\n')
                 
     
-    # def changeOptions(self, path: list[str], changes: dict[str, str]):
-    #     """Change the name of options for a submenu.
+    def changeOptions(self, path: list[str], changes: dict[str, str]):
+        """Change the name of options for a submenu.
 
-    #     Args:
-    #         path  
+        Args:
+            path (list[str]): path to the submenu to change.
+            changes (str: str): dictionary with the old names of the options as the keys, and the new names as values.
+                                Only needed for the options whose name changes.
 
-    #     """
+        """
+        menu = next(iter(self._menuStructure.values()))
+        for submenu in path:
+            menu = menu[submenu]
+
+        # all options need to be re-put into the submenu, to keep the order
+        changes = {option: changes[option] if option in changes else option for option in menu}
+        for option in list(menu):
+            menu[changes[option]] = menu.pop(option)
+
+        # changing option names in the current submenu
+        if path == self._currentPath:
+            self.updateList(list(self._currentMenu.keys()))
+
+        # changing name of submenu
+        if path == self._currentPath[:-1]:
+            self._currentPath[-1] = changes[self._currentPath[-1]]
+            self.setTopText(colored(self._currentPath[-1], 'blue') + '\n')
+
+    
+    def selectOption(selectedOption: str, newSelectedOption: str, options: list[str], padding: bool = True, selectText: str = "(selected)"):
+        """Creates the changes dictionary for when a single selectable option is chosen.
+
+        Args:
+            selectedOption (str): the currently selected option (can be None).
+            newSelectedOption (str): the newly selected option (also can be None).
+            options (list[str]): the complete list of options.
+            padding (bool): whether to pad the name of the selected option, so that the selectText is always at the same width.
+                           Important: if padding is left True, the original menu structure must also contain that padding.
+            selectedText (str): the text to be displayed to show an option is selected, by default '(selected)'.
+
+        Returns:
+            (str: str): the changes dictionary. 
+
+        """
+        maxOptionLength = max([len(option) for option in options])
+        changes = {}
+        for option in options:
+            key = option
+            if option == selectedOption:
+                if padding:
+                    key += " " * (maxOptionLength - len(option) + 1)
+                key += selectText
+                
+            value = option
+            if option == newSelectedOption:
+                if padding: 
+                    value += " " * (maxOptionLength - len(option) + 1)
+                value += selectText
+
+            changes[key] = value
+
+        return changes
+    
+    def selectMultipleOptions(selectedOptions: list[str], newSelectedOption: str, options: list[str], selectText: str = "(selected)", padding: bool = True):    
+        """Creates the changes dictionary for multiple selectable options.
+
+        Args:
+            selectedOptions (list[str]): the currently selected options.
+            newSelectedOption (str): the newly selected option (also can be None).
+            options (list[str]): the complete list of options.
+            padding (bool): whether to pad the name of the selected option, so that the selectText is always at the same width.
+                           Important: if padding is left True, the original menu structure must also contain that padding.
+            selectedText (str): the text to be displayed to show an option is selected, by default '(selected)'.
+
+        Returns:
+            (str: str): the changes dictionary. 
+
+        """
+        maxOptionLength = max([len(option) for option in options])
+        changes = {}
+        
+        for option in options:
+            key = option
+            if option in selectedOptions:
+                if padding:
+                    key += " " * (maxOptionLength - len(option) + 1)
+                key += selectText
+                
+            value = option
+            if option == newSelectedOption:
+                # selecting new option
+                if option not in selectedOptions:
+                    if padding: 
+                        value += " " * (maxOptionLength - len(option) + 1)
+                    value += selectText
+                
+                # by default, if the newSelectedOption has already been selected, the key will have selectText
+                # and it's unselected by simply having its value be itself without the selectText
+
+            else:
+                # adding selectText for unchanged selected options
+                if option in selectedOptions:
+                    if padding: 
+                        value += " " * (maxOptionLength - len(option) + 1)
+                    value += selectText
+
+            changes[key] = value
+
+        return changes
+    
+
+    def getMenuStructure(self):
+        """Get the menu structure of the interface, if selectable options have been changed.
+        
+        Returns:
+            (str: dict): the dictionary structure of the menu, with some potentially changed keys (options).
+        
+        """
+        return self._menuStructure

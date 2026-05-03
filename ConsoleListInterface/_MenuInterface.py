@@ -28,6 +28,9 @@ class MenuInterface(ConsoleListInterface):
     # only internal commands used by this class extension
     _KEEPCOMMANDS = [key.UP, key.DOWN, key.LEFT, key.RIGHT, key.CTRL_U, '?']
 
+    # setting collumn number to 1
+    _STARTCOLUMNNO = 1
+
     def _menuPrintFunc(optionName: str, maxNameWidth: int, currentMenu: dict[str: Optional[dict]], submenuColor: Union[str, tuple[int, int, int]], optionColor: Union[str, tuple[int, int, int]], ignoreMaxWidth: bool = True):
         """Special printing function for differentiating between submenus and options.
 
@@ -81,7 +84,7 @@ class MenuInterface(ConsoleListInterface):
         
         # rebinds to nothing for all the unused ConsoleListInterface internal commands
         rebindUnused = {command: "" for command in MenuInterface._INTERNALCOMMANDS if command not in MenuInterface._KEEPCOMMANDS}
-
+        
         super(MenuInterface, self).__init__(items=list(self._currentMenu.keys()), specialCommands=self._SPECIALCOMMANDS, helpPage=self._HELPPAGE, 
                                             printFunc=lambda optionName, maxNameWidth: MenuInterface._menuPrintFunc(optionName, maxNameWidth, self._currentMenu, submenuColor, optionColor), rebindCommand=rebindUnused)
 

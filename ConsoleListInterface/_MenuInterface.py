@@ -5,21 +5,21 @@ from readchar import key
 import string
 
 
+
+_HELPPAGE = """Controls:
+    - arrow keys -> moving between options in the current menu.
+    - enter      -> if the selected item is a submenu, enter said submenu.
+                 -> if the selected item is an option, choose said option.
+    - ctrl+u     -> update printed menu (if the menu or the console size was changed).
+    - '?'        -> display current help page.
+"""
+
 class MenuInterface(ConsoleListInterface):
     """Class for interacting with a menu.
 
     This is a much more restrictive and specific version of the ConsoleListInterface class.
     It only allows movement between the various submenus.
     
-    """
-
-    _HELPPAGE = """
-    Controls:
-        - arrow keys -> moving between options in the current menu.
-        - enter      -> if the selected item is a submenu, enter said submenu.
-                     -> if the selected item is an option, choose said option.
-        - ctrl+u     -> update printed menu (if the menu or the console size was changed).
-        - '?'        -> display current help page.
     """
 
     # overwritting searching by first letter and adding enter for choosing submenu/option and backspace for returning to previous menu
@@ -30,30 +30,6 @@ class MenuInterface(ConsoleListInterface):
 
     # setting collumn number to 1
     _STARTCOLUMNNO = 1
-
-    def _menuPrintFunc(optionName: str, maxNameWidth: int, currentMenu: dict[str: Optional[dict]], submenuColor: Union[str, tuple[int, int, int]], optionColor: Union[str, tuple[int, int, int]], ignoreMaxWidth: bool = True):
-        """Special printing function for differentiating between submenus and options.
-
-        Args:
-            optionName (str): the name of the option.
-            maxNameWidth (int): the total number of characters that the printed name can have (otherwise it will get cut-off).
-            currentMenu (str: dict): the structure of the current menu (since it's a dictionary, Python passes it by reference - sort-of: https://stackoverflow.com/a/15078615/31936209).
-            submenuColor (str | (int, int, int)): the color for printing submenu names.
-            optionColor (str | (int, int, int)): the color for printing option names. 
-            ignoreMaxWidth (bool): since the menus aren't likely to have more options than the height of the terminal, the cut-off is ignored by default.   
-
-        Returns:
-            The truncated name.
-
-        """
-        isMenu = (currentMenu[optionName] is not None)
-        if len(optionName) <= maxNameWidth or ignoreMaxWidth:
-            optionName = optionName
-        else:
-            optionName = optionName[:maxNameWidth - 1] + '-'
-        optionName = colored(optionName, submenuColor) if isMenu else colored(optionName, optionColor)
-
-        return optionName
 
 
     def __init__(self, menuStructure: dict[str, dict], submenuColor: Union[str, tuple[int, int, int]] = 'blue', optionColor: Union[str, tuple[int, int, int]] = 'light_blue'):
@@ -85,11 +61,36 @@ class MenuInterface(ConsoleListInterface):
         # rebinds to nothing for all the unused ConsoleListInterface internal commands
         rebindUnused = {command: "" for command in MenuInterface._INTERNALCOMMANDS if command not in MenuInterface._KEEPCOMMANDS}
         
-        super(MenuInterface, self).__init__(items=list(self._currentMenu.keys()), specialCommands=self._SPECIALCOMMANDS, helpPage=self._HELPPAGE, 
+        super(MenuInterface, self).__init__(items=list(self._currentMenu.keys()), specialCommands=self._SPECIALCOMMANDS, helpPage=_HELPPAGE, 
                                             printFunc=lambda optionName, maxNameWidth: MenuInterface._menuPrintFunc(optionName, maxNameWidth, self._currentMenu, submenuColor, optionColor), rebindCommand=rebindUnused)
 
         self.setTopText(colored(next(iter(menuStructure.keys())), self._submenuColor) + '\n') # Main Menu name
     
+
+    def _menuPrintFunc(optionName: str, maxNameWidth: int, currentMenu: dict[str: Optional[dict]], submenuColor: Union[str, tuple[int, int, int]], optionColor: Union[str, tuple[int, int, int]], ignoreMaxWidth: bool = True):
+        """Special printing function for differentiating between submenus and options.
+
+        Args:
+            optionName (str): the name of the option.
+            maxNameWidth (int): the total number of characters that the printed name can have (otherwise it will get cut-off).
+            currentMenu (str: dict): the structure of the current menu (since it's a dictionary, Python passes it by reference - sort-of: https://stackoverflow.com/a/15078615/31936209).
+            submenuColor (str | (int, int, int)): the color for printing submenu names.
+            optionColor (str | (int, int, int)): the color for printing option names. 
+            ignoreMaxWidth (bool): since the menus aren't likely to have more options than the height of the terminal, the cut-off is ignored by default.   
+
+        Returns:
+            The truncated name.
+
+        """
+        isMenu = (currentMenu[optionName] is not None)
+        if len(optionName) <= maxNameWidth or ignoreMaxWidth:
+            optionName = optionName
+        else:
+            optionName = optionName[:maxNameWidth - 1] + '-'
+        optionName = colored(optionName, submenuColor) if isMenu else colored(optionName, optionColor)
+
+        return optionName
+
 
     def interactWithMenu(self):
         """Interacting with the menu interface, until an option is chosen.

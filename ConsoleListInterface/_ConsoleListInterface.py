@@ -405,7 +405,7 @@ class ConsoleListInterface:
             if not self._disableHelp and command == self._commandBind['?']:
                 cls()
                 moveCursor(0, 0)
-                print(self._helpPage + "\nPress enter to continue.")
+                print(self._helpPage + "\nPress enter to continue.", end='')
                 waitForEnter()
                 cls()
                 self.printList()

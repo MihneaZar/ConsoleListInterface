@@ -28,13 +28,15 @@ class MenuInterface(ConsoleListInterface):
     # only internal commands used by this class extension
     _KEEPCOMMANDS = [key.UP, key.DOWN, key.LEFT, key.RIGHT, key.CTRL_U, '?']
 
-    def _menuPrintFunc(optionName: str, maxNameWidth: int, currentMenu: dict[str: Optional[dict]], ignoreMaxWidth: bool = True):
+    def _menuPrintFunc(optionName: str, maxNameWidth: int, currentMenu: dict[str: Optional[dict]], submenuColor: Union[str, tuple[int, int, int]], optionColor: Union[str, tuple[int, int, int]], ignoreMaxWidth: bool = True):
         """Special printing function for differentiating between submenus and options.
 
         Args:
             optionName (str): the name of the option.
             maxNameWidth (int): the total number of characters that the printed name can have (otherwise it will get cut-off).
-            currentMenu (str: dict): the structure of the current submenu (since it's a dictionary, Python passes it by reference - sort-of: https://stackoverflow.com/a/15078615/31936209)
+            currentMenu (str: dict): the structure of the current submenu (since it's a dictionary, Python passes it by reference - sort-of: https://stackoverflow.com/a/15078615/31936209).
+            submenuColor (str | (int, int, int)): the color for printing submenu names.
+            optionColor (str | (int, int, int)): the color for printing option names. 
             ignoreMaxWidth (bool): since the menus aren't likely to have more options than the height of the terminal, the cut-off is ignored by default.   
 
         Returns:
@@ -46,12 +48,12 @@ class MenuInterface(ConsoleListInterface):
             optionName = optionName
         else:
             optionName = optionName[:maxNameWidth - 1] + '-'
-        optionName = colored(optionName, 'blue') if isMenu else colored(optionName, 'light_blue')
+        optionName = colored(optionName, submenuColor) if isMenu else colored(optionName, optionColor)
 
         return optionName
 
 
-    def __init__(self, menuStructure: dict[str, dict]):
+    def __init__(self, menuStructure: dict[str, dict], submenuColor: Union[str, tuple[int, int, int]] = 'blue', optionColor: Union[str, tuple[int, int, int]] = 'light_blue'):
         """Intializes console interface.
 
         Args:
@@ -59,6 +61,13 @@ class MenuInterface(ConsoleListInterface):
                                        The first level key represents the Main Menu title.
                                        A submenu is represented by a (str: dict) value.
                                        An option for a menu is represented by a (str: None) value.
+
+            submenuColor (str | (int, int, int)): the color for printing submenu names (default blue).
+                                                  If string, must be compatible with termcolor.colored.
+                                                  If int tuple, it will be the RGB values.
+            optionColor (str | (int, int, int)): the color for printing option names (default light blue). 
+                                                  If string, must be compatible with termcolor.colored.
+                                                  If int tuple, it will be the RGB values.
 
         Returns: 
             A MenuInterface object.
@@ -68,14 +77,15 @@ class MenuInterface(ConsoleListInterface):
         self._menuStructure = menuStructure
         self._currentPath   = []
         self._currentMenu   = next(iter(menuStructure.values())) # obtaining Main Menu
+        self._submenuColor  = submenuColor
         
         # rebinds to nothing for all the unused ConsoleListInterface internal commands
         rebindUnused = {command: "" for command in MenuInterface._INTERNALCOMMANDS if command not in MenuInterface._KEEPCOMMANDS}
 
         super(MenuInterface, self).__init__(items=list(self._currentMenu.keys()), specialCommands=self._SPECIALCOMMANDS, helpPage=self._HELPPAGE, 
-                                            printFunc=lambda optionName, maxNameWidth: MenuInterface._menuPrintFunc(optionName, maxNameWidth, self._currentMenu), rebindCommand=rebindUnused)
+                                            printFunc=lambda optionName, maxNameWidth: MenuInterface._menuPrintFunc(optionName, maxNameWidth, self._currentMenu, submenuColor, optionColor), rebindCommand=rebindUnused)
 
-        self.setTopText(colored(next(iter(menuStructure.keys())), 'blue') + '\n') # Main Menu name
+        self.setTopText(colored(next(iter(menuStructure.keys())), self._submenuColor) + '\n') # Main Menu name
     
 
     def interactWithMenu(self):
@@ -99,7 +109,7 @@ class MenuInterface(ConsoleListInterface):
                 self._currentPath.append(optionName) 
                 self.updateList(list(self._currentMenu.keys()))
                 self.updatePos(0)
-                self.setTopText(colored(optionName, 'blue') + '\n')
+                self.setTopText(colored(optionName, self._submenuColor) + '\n')
 
             if command == key.BACKSPACE:
                 if self._currentPath == []:
@@ -114,7 +124,7 @@ class MenuInterface(ConsoleListInterface):
 
                 self.updateList(list(self._currentMenu.keys()))
                 self.updatePos(self._items.index(submenuName))
-                self.setTopText(colored(menuName, 'blue') + '\n')
+                self.setTopText(colored(menuName, self._submenuColor) + '\n')
                 
     
     def changeOptions(self, path: list[str], changes: dict[str, str]):
@@ -142,7 +152,7 @@ class MenuInterface(ConsoleListInterface):
         # changing name of submenu
         if path == self._currentPath[:-1]:
             self._currentPath[-1] = changes[self._currentPath[-1]]
-            self.setTopText(colored(self._currentPath[-1], 'blue') + '\n')
+            self.setTopText(colored(self._currentPath[-1], self._submenuColor) + '\n')
 
     
     def selectOption(selectedOption: str, newSelectedOption: str, options: list[str], padding: bool = True, selectText: str = "(selected)"):

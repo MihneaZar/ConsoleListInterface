@@ -26,7 +26,7 @@ class MenuInterface(ConsoleListInterface):
     _SPECIALCOMMANDS = list(string.ascii_lowercase) + [key.ENTER, key.BACKSPACE]
     
     # only internal commands used by this class extension
-    _INTERNALCOMMANDSNEW = [key.UP, key.DOWN, key.LEFT, key.RIGHT, key.CTRL_U, '?']
+    _KEEPCOMMANDS = [key.UP, key.DOWN, key.LEFT, key.RIGHT, key.CTRL_U, '?']
 
     def _menuPrintFunc(optionName: str, maxNameWidth: int, currentMenu: dict[str: Optional[dict]], ignoreMaxWidth: bool = True):
         """Special printing function for differentiating between submenus and options.
@@ -64,16 +64,16 @@ class MenuInterface(ConsoleListInterface):
             A MenuInterface object.
 
         """
-        if startPath is None:
-            startPath = []
+        # if startPath is None:
+            # startPath = []
 
         self._menuStructure = menuStructure
         # self._currentPath   = startPath
         self._currentPath   = []
         self._currentMenu   = next(iter(menuStructure.values())) # obtaining Main Menu
         
-        # rebinds for all the unused ConsoleListInterface internal commands
-        rebindUnused = {command: "" for command in MenuInterface._INTERNALCOMMANDS if command not in MenuInterface._INTERNALCOMMANDSNEW}
+        # rebinds to nothing for all the unused ConsoleListInterface internal commands
+        rebindUnused = {command: "" for command in MenuInterface._INTERNALCOMMANDS if command not in MenuInterface._KEEPCOMMANDS}
 
         super(MenuInterface, self).__init__(items=list(self._currentMenu.keys()), specialCommands=self._SPECIALCOMMANDS, helpPage=self._HELPPAGE, 
                                             printFunc=lambda optionName, maxNameWidth: MenuInterface._menuPrintFunc(optionName, maxNameWidth, self._currentMenu), rebindCommand=rebindUnused)

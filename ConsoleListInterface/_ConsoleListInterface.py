@@ -97,7 +97,7 @@ class ConsoleListInterface:
         self._consoleWidth   = os.get_terminal_size()[0] 
         self._itemsPerColumn = os.get_terminal_size()[1] - 2 - (self._topText.count('\n') + 1) + 1 # help page message, then startPrintLine
 
-        self._separateInteractionPos = max(int(self._itemsPerColumn / 2 - 4), 0)
+        self._separateInteractionPos = max(int(os.get_terminal_size()[1] / 2) - 4, 0)
         
         self._shownColumns = self._STARTCOLUMNNO
         self._maxNameWidth = int(self._consoleWidth / self._shownColumns) - self._SPACESBEFORE
@@ -148,7 +148,7 @@ class ConsoleListInterface:
 
             self._consoleWidth   = os.get_terminal_size()[0]
             self._itemsPerColumn = os.get_terminal_size()[1] - 2 - (self._topText.count('\n') + 1) + 1 # help page message, then startPrintLine
-            self._separateInteractionPos = max(int(self._itemsPerColumn / 2 - 4), 0)
+            self._separateInteractionPos = max(int(os.get_terminal_size()[1] / 2) - 4, 0)
             
             self._totalColumns     = roundup(len(self._items) / self._itemsPerColumn)
             self._lastColumnHeight = len(self._items) % self._itemsPerColumn

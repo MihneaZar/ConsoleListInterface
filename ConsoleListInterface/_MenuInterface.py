@@ -171,6 +171,9 @@ class MenuInterface(ConsoleListInterface):
         """
         self._menuStructure[newMainMenu] = self._menuStructure.pop(next(iter(self._menuStructure.keys())))
 
+        if self._currentPath == []:
+            self.setTopText(colored(newMainMenu, self._submenuColor) + '\n')
+
     
     def selectOption(selectedOption: str, newSelectedOption: str, options: list[str], padding: bool = True, selectText: str = "(selected)"):
         """Creates the changes dictionary for when a single selectable option is chosen.

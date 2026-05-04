@@ -11,6 +11,7 @@ setup(
     packages=['ConsoleListInterface'],
     install_requires=['readchar>=4.2.1',
                       'cursor>=1.3.5',                     
+                      'termcolor>=3.3.0'
                       ],
 
     classifiers=[

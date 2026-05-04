@@ -1,4 +1,5 @@
 from ConsoleListInterface._ConsoleListInterface import ConsoleListInterface
+from ConsoleListInterface._cli_utils import moveCursor, waitForEnter, cls
 from typing import Union, Optional
 from termcolor import colored
 from readchar import key
@@ -32,7 +33,7 @@ class MenuInterface(ConsoleListInterface):
     _STARTCOLUMNNO = 1
 
 
-    def __init__(self, menuStructure: dict[str, dict], submenuColor: Union[str, tuple[int, int, int]] = 'blue', optionColor: Union[str, tuple[int, int, int]] = 'light_blue'):
+    def __init__(self, menuStructure: dict[str, dict], submenuColor: Union[str, tuple[int, int, int]] = 'blue', optionColor: Union[str, tuple[int, int, int]] = 'light_blue', supressColorWarning: bool = False):
         """Intializes console interface.
 
         Args:
@@ -48,10 +49,18 @@ class MenuInterface(ConsoleListInterface):
                                                   If string, must be compatible with termcolor.colored.
                                                   If int tuple, it will be the RGB values.
 
+            supressColorWarning (bool): set this to True if the 'grey' color option prints visibly in the terminal, 
+                                        in order to ignore the warning for it.
+
         Returns: 
             A MenuInterface object.
 
         """
+        if not supressColorWarning and "grey" in [submenuColor, optionColor]:
+            cls()
+            moveCursor(0, 0)
+            print("MenuInterface.__init__ warning: termcolor 'grey' may not be visible in the terminal.\nConsider changing it to 'light_grey' - the standard color of text in terminal.\n\nPress enter to continue.\n")
+            waitForEnter()
 
         self._menuStructure = menuStructure
         self._currentPath   = []

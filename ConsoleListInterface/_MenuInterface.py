@@ -115,6 +115,8 @@ class MenuInterface(ConsoleListInterface):
                 self.updatePos(0)
                 self.setTopText(colored(optionName, self._submenuColor) + '\n')
 
+                return self._currentPath # returning current path, for title changes
+
             if command == key.BACKSPACE:
                 if self._currentPath == []:
                     return self._currentPath
@@ -129,6 +131,8 @@ class MenuInterface(ConsoleListInterface):
                 self.updateList(list(self._currentMenu.keys()))
                 self.updatePos(self._items.index(submenuName))
                 self.setTopText(colored(menuName, self._submenuColor) + '\n')
+
+                return self._currentPath # returning current path, for title changes
                 
     
     def changeOptions(self, path: list[str], changes: dict[str, str]):

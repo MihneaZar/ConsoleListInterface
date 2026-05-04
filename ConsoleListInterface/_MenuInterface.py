@@ -74,10 +74,10 @@ class MenuInterface(ConsoleListInterface):
         # rebinds to nothing for all the unused ConsoleListInterface internal commands
         rebindUnused = {command: "" for command in MenuInterface._INTERNALCOMMANDS if command not in MenuInterface._KEEPCOMMANDS}
         
-        super(MenuInterface, self).__init__(items=list(self._currentMenu.keys()), specialCommands=self._SPECIALCOMMANDS, helpPage=_HELPPAGE, rebindCommand=rebindUnused, dontPrintList=dontPrintMenu,
+        super(MenuInterface, self).__init__(items=list(self._currentMenu.keys()), specialCommands=self._SPECIALCOMMANDS, helpPage=_HELPPAGE, rebindCommand=rebindUnused, dontPrintList=True, # the list will be reprinted anyway in setTopText
                                             printFunc=lambda optionName, maxNameWidth: MenuInterface._menuPrintFunc(optionName, maxNameWidth, self._currentMenu, submenuColor, optionColor))
 
-        self.setTopText(colored(next(iter(menuStructure.keys())), self._submenuColor) + '\n') # Main Menu name
+        self.setTopText(colored(next(iter(menuStructure.keys())), self._submenuColor) + '\n', dontPrintList=dontPrintMenu) # Main Menu name
     
 
     def _menuPrintFunc(optionName: str, maxNameWidth: int, currentMenu: dict[str: Optional[dict]], submenuColor: Union[str, tuple[int, int, int]], optionColor: Union[str, tuple[int, int, int]], ignoreMaxWidth: bool = True):

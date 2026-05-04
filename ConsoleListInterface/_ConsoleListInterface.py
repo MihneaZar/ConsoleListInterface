@@ -535,11 +535,13 @@ class ConsoleListInterface:
         print(" -> ")
 
 
-    def setTopText(self, text = str):
+    def setTopText(self, text = str, dontPrintList: bool = False):
         """Set text to be displayed above the list.
 
         Args:
             text (str): text to be displayed.
+            dontPrintList (bool): will stop this function from reprinting list,
+                                  to avoid some unnecessary reprints.
          
         """
         if not text:
@@ -548,8 +550,10 @@ class ConsoleListInterface:
         text += '\n'
 
         self._topText = text
-        self._itemsPerColumn = os.get_terminal_size()[1] - 2 - (self._topText.count('\n') + 1) + 1 # help page message, then startPrintLine
-        self.printList()
+        self._itemsPerColumn = os.get_terminal_size()[1] - 2 - (self._topText.count('\n') + 1) + 1 # help page message, then 
+        
+        if not dontPrintList:
+            self.printList()
 
     def setTitle(self, title = str):
         """Set title for the terminal console.

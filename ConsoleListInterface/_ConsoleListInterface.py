@@ -71,7 +71,7 @@ class ConsoleListInterface:
 
 
     def __init__(self, items: list[str] = [], specialCommands: list[str] = [key.ENTER, key.ESC], helpPage: str = DEFAULTHELP, startPos: int = 0, 
-                 printFunc: Callable[[str, int], int] = defaultPrintFunc, rebindCommand: dict[str, str] = {}, disableHelp: bool = False):
+                 printFunc: Callable[[str, int], int] = defaultPrintFunc, rebindCommand: dict[str, str] = {}, disableHelp: bool = False, dontPrintList: bool = False):
         """Intializes console interface.
 
         Args:
@@ -83,7 +83,8 @@ class ConsoleListInterface:
             printFunc ((str, int) -> str): custom function for printing the item names (str is the name and int is the cut-off for the name length).
             rebindCommand (str: str): dictionary for rebinding internal commands to other keys (e.g. rebindCommand[key.CTRL_F] = key.CTRL_S will bind searching by string to ctrl+s instead of ctrl+f). 
                                       Binding multiple commands to the same key will lead to only one of them being detected.
-            disableHelp: disable the "Type '?' for help page." message and help page printing.
+            disableHelp (bool): disable the "Type '?' for help page." message and help page printing.
+            dontPrintList (bool): set True to stop the list from being printed on __init__.
 
         Returns:
             ConsoleListInterface object.
@@ -129,7 +130,8 @@ class ConsoleListInterface:
 
         cursor.hide()
 
-        self.printList()
+        if not dontPrintList:
+            self.printList()
 
 
     def printList(self):

@@ -54,7 +54,7 @@ def main():
             
             changes = MenuInterface.selectOption(selected_difficulty, path[-1], DIFFICULTIES)
             selected_difficulty = path[-1]
-            menu.changeOptions(path[:-1], changes)
+            menu.changeOptionNames(path[:-1], changes)
 
             continue
         
@@ -73,7 +73,7 @@ def main():
 
             volume_value = f"Sound ({volume_level}%)"
 
-            menu.changeOptions(path[:-2], {volume_key: volume_value})
+            menu.changeOptionNames(path[:-2], {volume_key: volume_value})
 
 
         if 2 <= len(path) and path[-2] == "Extras":
@@ -88,7 +88,7 @@ def main():
             else:
                 selected_extras.remove(selected_extra)
 
-            menu.changeOptions(path[:-1], changes)
+            menu.changeOptionNames(path[:-1], changes)
 
             continue
 

@@ -143,8 +143,27 @@ class MenuInterface(ConsoleListInterface):
 
                 return self._currentPath # returning current path, for title changes
                 
-    
-    def changeOptions(self, path: list[str], changes: dict[str, str]):
+                
+    def addOptions(self, path: list[str], options: dict[str, dict]):
+        """Add options to a submenu.
+
+        Args:
+            path (list[str]): path to the menu to change.
+            options (str: dict): dictionary with the new submenus and options.
+
+        """
+        menu = next(iter(self._menuStructure.values()))
+        for submenu in path:
+            menu = menu[submenu]
+
+        for option in options:
+            menu[option] = options[option]
+
+        # adding options in the current submenu
+        if path == self._currentPath:
+            self.updateList(list(self._currentMenu.keys()))
+
+    def changeOptionNames(self, path: list[str], changes: dict[str, str]):
         """Change the name of options for a menu.
 
         Args:

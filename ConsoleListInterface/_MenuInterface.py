@@ -11,6 +11,7 @@ _HELPPAGE = """Controls:
     - arrow keys -> moving between options in the current menu.
     - enter      -> if the selected item is a submenu, enter said submenu.
                  -> if the selected item is an option, choose said option.
+    - backspace  -> return to previous menu.
     - ctrl+u     -> update printed menu (if the menu or the console size was changed).
     - '?'        -> display current help page.
 """

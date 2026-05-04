@@ -35,7 +35,7 @@ class MenuInterface(ConsoleListInterface):
 
 
     def __init__(self, menuStructure: dict[str, dict], submenuColor: Union[str, tuple[int, int, int]] = 'blue', optionColor: Union[str, tuple[int, int, int]] = 'light_blue', 
-                 supressColorWarning: bool = False, dontPrintList: bool = False):
+                 supressColorWarning: bool = False, dontPrintMenu: bool = False):
         """Intializes console interface.
 
         Args:
@@ -54,7 +54,7 @@ class MenuInterface(ConsoleListInterface):
             supressColorWarning (bool): set this to True if the 'grey' color option prints visibly in the terminal, 
                                         in order to ignore the warning for it.
 
-            dontPrintList (bool): set True to stop the Main Menu from being printed on __init__.
+            dontPrintMenu (bool): set True to stop the Main Menu from being printed on __init__.
 
         Returns: 
             A MenuInterface object.
@@ -74,7 +74,7 @@ class MenuInterface(ConsoleListInterface):
         # rebinds to nothing for all the unused ConsoleListInterface internal commands
         rebindUnused = {command: "" for command in MenuInterface._INTERNALCOMMANDS if command not in MenuInterface._KEEPCOMMANDS}
         
-        super(MenuInterface, self).__init__(items=list(self._currentMenu.keys()), specialCommands=self._SPECIALCOMMANDS, helpPage=_HELPPAGE, rebindCommand=rebindUnused, dontPrintList=dontPrintList,
+        super(MenuInterface, self).__init__(items=list(self._currentMenu.keys()), specialCommands=self._SPECIALCOMMANDS, helpPage=_HELPPAGE, rebindCommand=rebindUnused, dontPrintList=dontPrintMenu,
                                             printFunc=lambda optionName, maxNameWidth: MenuInterface._menuPrintFunc(optionName, maxNameWidth, self._currentMenu, submenuColor, optionColor))
 
         self.setTopText(colored(next(iter(menuStructure.keys())), self._submenuColor) + '\n') # Main Menu name

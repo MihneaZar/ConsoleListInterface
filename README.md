@@ -4,7 +4,8 @@ A library for interacting with a list of items in the console/terminal.
 ## Requirements (installed on setup)
 - The [python-readchar](https://pypi.org/project/readchar/) library for reading keystrokes;
 - The [cursor](https://pypi.org/project/cursor/) library for hiding the cursor in console;
-- The [termcolor](https://pypi.org/project/termcolor/) library for printing colored names.
+- The [termcolor](https://pypi.org/project/termcolor/) library for printing colored names;
+- (Optional) The [PyYAML](https://pypi.org/project/PyYAML/) library for loading menu structures - this library is not installed on setup, and the Python [JSON](https://docs.python.org/3/library/json.html) standard library can be used instead for loading menus models.
 
 ## Setup 
 Simply run 'pip3 install .' in the root directory, and pip will install this library as an importable Python package. <br>

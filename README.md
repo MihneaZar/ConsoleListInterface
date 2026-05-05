@@ -18,7 +18,7 @@ As a much more specific use-case and extension of the ConsoleListInterface, the 
 As is shown in this [example](examples/Menu%20Interface), the menu can be easily structured in the [YAML](https://yaml.org/) or [JSON](https://www.json.org/json-en.html) formats. <br>
 The 'Main Menu' (its name can be changed through the first key) and its subsequent submenus can have a combination of options and submenus - a submenu is a list item which leads to another menu, and an option is a the end of an option path (a leaf in the menu tree). <br>
 The example includes possible implementations for single-select options, multi-select options, and controlling the level of an option. <br>
-Note: to simplify the implementation, the options are string-key dictionary entries with a None value (instead of simply being a string, since mixing strings with dicts that way would get quite stuffy and confusing).  
+Note: to simplify the implementation, the options are string-key dictionary entries with a None or an empty string value (instead of simply being a string, since mixing strings with dicts that way would get quite stuffy and confusing).  
 
 ## Additional Functions
 - moveCursor(y: int, x: int) -> places the console cursor at given position (implementation might not work in all console environments);

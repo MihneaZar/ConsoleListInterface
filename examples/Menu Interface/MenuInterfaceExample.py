@@ -1,5 +1,12 @@
 from ConsoleListInterface import MenuInterface
-import yaml
+
+# importing json if pyyaml is not installed
+try:
+    import yaml
+    yaml_imported = True
+except:
+    import json
+    yaml_imported = False
 
 
 DIFFICULTIES = ["Hard", "Normal", "Easy"]
@@ -11,8 +18,12 @@ def main():
     selected_difficulty = "Normal"
     selected_extras = []
     volume_level = 50
+    
+    if yaml_imported:
+        menu = MenuInterface(yaml.load(open("example_menu.yaml"), Loader=yaml.FullLoader))
+    else:
+        menu = MenuInterface(json.load(open("example_menu.json")))
 
-    menu = MenuInterface(yaml.load(open("example_menu.yaml"), Loader=yaml.FullLoader))
     while True:
         path = menu.interactWithMenu()
 
@@ -23,24 +34,38 @@ def main():
         if 'Start' in path:
             # note that this outputs options as '{OptionName}: null'
             # perhaps it's better to use json 
-            yaml.safe_dump(menu.getMenuStructure(), open("example_menu_output.yaml", 'w'), indent=4, sort_keys=False)
+            if yaml_imported:
+                with open("example_menu_output.yaml", 'w') as file:
+                    yaml.safe_dump(menu.getMenuStructure(), file, indent=4, sort_keys=False)
+                    filename = "example_menu_output.yaml"
+            else:
+                with open("example_menu_output.json", 'w') as file:
+                    json.dump(menu.getMenuStructure(), file, indent=4, sort_keys=False)
+                    filename = "example_menu_output.json"
 
             # removing null from output
-            yaml_text = "".join(open("example_menu_output.yaml", 'r').readlines()).replace('null', '')
-            with open("example_menu_output.yaml", 'w') as file:
-                file.write(yaml_text)
+            file_text = "".join(open(filename, 'r').readlines()).replace('null', '')
+            with open(filename, 'w') as file:
+                file.write(file_text)
 
             menu.separateInteraction(message="Starting game...\n")
 
         if path[-1].startswith("Play"):
             # note that this outputs options as '{OptionName}: null'
             # perhaps it's better to use json 
-            yaml.safe_dump(menu.getMenuStructure(), open("example_menu_output.yaml", 'w'), indent=4, sort_keys=False)
+            if yaml_imported:
+                with open("example_menu_output.yaml", 'w') as file:
+                    yaml.safe_dump(menu.getMenuStructure(), file, indent=4, sort_keys=False)
+                    filename = "example_menu_output.yaml"
+            else:
+                with open("example_menu_output.json", 'w') as file:
+                    json.dump(menu.getMenuStructure(), file, indent=4, sort_keys=False)
+                    filename = "example_menu_output.json"
 
             # removing null from output
-            yaml_text = "".join(open("example_menu_output.yaml", 'r').readlines()).replace('null', '')
-            with open("example_menu_output.yaml", 'w') as file:
-                file.write(yaml_text)
+            file_text = "".join(open(filename, 'r').readlines()).replace('null', '')
+            with open(filename, 'w') as file:
+                file.write(file_text)
 
             chapter_name = path[-1][len("Play "):]
             menu.separateInteraction(message=f"Playing {chapter_name}...\n")
@@ -96,12 +121,17 @@ def main():
         if 'Quit' in path:
             # note that this outputs options as '{OptionName}: null'
             # perhaps it's better to use json 
-            yaml.safe_dump(menu.getMenuStructure(), open("example_menu_output.yaml", 'w'), indent=4, sort_keys=False)
+            if yaml_imported:
+                with open("example_menu_output.yaml", 'w') as file:
+                    yaml.safe_dump(menu.getMenuStructure(), file, indent=4, sort_keys=False)
+                    yaml_text = "".join(open("example_menu_output.yaml", 'r').readlines()).replace('null', '')
+                    with open("example_menu_output.yaml", 'w') as file:
+                        file.write(yaml_text)
 
-            # removing null from output
-            yaml_text = "".join(open("example_menu_output.yaml", 'r').readlines()).replace('null', '')
-            with open("example_menu_output.yaml", 'w') as file:
-                file.write(yaml_text)
+            else:
+                with open("example_menu_output.json", 'w') as file:
+                    json.dump(menu.getMenuStructure(), file, indent=4, sort_keys=False)
+                
             menu.exitInterface()
             return
 

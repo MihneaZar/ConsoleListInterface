@@ -42,7 +42,7 @@ class MenuInterface(ConsoleListInterface):
             menuStructure (str: dict): the structure of the menu and its submenus, in the form of a dictionary.
                                        The first level key represents the Main Menu title.
                                        A submenu is represented by a (str: dict) value.
-                                       An option for a menu is represented by a (str: None) value.
+                                       An option for a menu is represented by a (str: None or str: "") option.
 
             submenuColor (str | (int, int, int)): the color for printing submenu names (default blue).
                                                   If string, must be compatible with termcolor.colored.
@@ -95,7 +95,7 @@ class MenuInterface(ConsoleListInterface):
             The truncated name.
 
         """
-        isMenu = (currentMenu[optionName] is not None)
+        isMenu = (currentMenu[optionName] != "" and currentMenu[optionName] is not None)
         if len(optionName) <= maxNameWidth or ignoreMaxWidth:
             optionName = optionName
         else:
@@ -246,7 +246,7 @@ class MenuInterface(ConsoleListInterface):
 
         Args:
             selectedOptions (list[str]): the currently selected options.
-            newSelectedOption (str): the newly selected option (also can be None).
+            newSelectedOption (str): the newly selected option (can be None).
             options (list[str]): the complete list of options.
             padding (bool): whether to pad the name of the selected option, so that the selectText is always at the same width.
                            Important: if padding is left True, the original menu structure must also contain that padding.

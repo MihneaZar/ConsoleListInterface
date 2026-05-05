@@ -6,6 +6,7 @@
             "Play Chapter 2": "",
             "Play Chapter 3": ""
         },
+
         "Settings": {
             "Difficulty": {
                 "This is to show that you can have selectable options *and* submenus in the same menu": {
@@ -14,10 +15,12 @@
                     "Another": "",
                     "Level": ""
                 },
+
                 "Hard": "",
                 "Normal (selected)": "",
                 "Easy": ""
             },
+
             "Sound (50%)": {
                 "This is to show that you can have selectable options *and* submenus in the same menu": {
                     "This": "",
@@ -25,21 +28,24 @@
                     "Another": "",
                     "Level": ""
                 },
+                
                 "Raise Volume": "",
                 "Lower Volume": ""
             },
-            "Extras": {
-                "This is to show that you can have selectable options *and* submenus in the same menu": {
+
+            "Extras": {"This is to show that you can have selectable options *and* submenus in the same menu": {
                     "This": "",
                     "Is": "",
                     "Another": "",
                     "Level": ""
                 },
+
                 "Big Head Mode": "",
                 "Invincibility": "",
                 "Score x10": ""
             }
         },
+
         "Quit": ""
     }
 }

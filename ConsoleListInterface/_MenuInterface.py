@@ -190,7 +190,7 @@ class MenuInterface(ConsoleListInterface):
             self.updateList(list(self._currentMenu.keys()))
 
         # changing name of submenu
-        if path == self._currentPath[:-1]:
+        if path and path == self._currentPath[:-1]:
             self._currentPath[-1] = changes[self._currentPath[-1]]
             self.setTopText(colored(self._currentPath[-1], self._submenuColor) + '\n')
 

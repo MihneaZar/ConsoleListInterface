@@ -147,25 +147,18 @@ class MenuInterface(ConsoleListInterface):
 
                 return self._currentPath # returning current path, for title changes
                 
-                
-    def addOptions(self, path: list[str], options: dict[str, dict]):
-        """Add options to a submenu.
+
+    def changeMainMenuTitle(self, newMainMenu: str):
+        """Change the title of the Main Menu.
 
         Args:
-            path (list[str]): path to the menu to change.
-            options (str: dict): dictionary with the new submenus and options.
-
+            newMainMenu (str): the new title for the main menu.
+        
         """
-        menu = next(iter(self._menuStructure.values()))
-        for submenu in path:
-            menu = menu[submenu]
+        self._menuStructure[newMainMenu] = self._menuStructure.pop(next(iter(self._menuStructure.keys())))
 
-        for option in options:
-            menu[option] = options[option]
-
-        # adding options in the current submenu
-        if path == self._currentPath:
-            self.updateList(list(self._currentMenu.keys()))
+        if self._currentPath == []:
+            self.setTopText(colored(newMainMenu, self._submenuColor) + '\n')
 
     def changeOptionNames(self, path: list[str], changes: dict[str, str]):
         """Change the name of options for a menu.
@@ -194,18 +187,26 @@ class MenuInterface(ConsoleListInterface):
             self._currentPath[-1] = changes[self._currentPath[-1]]
             self.setTopText(colored(self._currentPath[-1], self._submenuColor) + '\n')
 
-    def changeMainMenu(self, newMainMenu: str):
-        """Change the title of the Main Menu.
+                
+    def addOptions(self, path: list[str], options: dict[str, dict]):
+        """Add options to a submenu.
 
         Args:
-            newMainMenu (str): the new title for the main menu.
-        
+            path (list[str]): path to the menu to change.
+            options (str: dict): dictionary with the new submenus and options.
+
         """
-        self._menuStructure[newMainMenu] = self._menuStructure.pop(next(iter(self._menuStructure.keys())))
+        menu = next(iter(self._menuStructure.values()))
+        for submenu in path:
+            menu = menu[submenu]
 
-        if self._currentPath == []:
-            self.setTopText(colored(newMainMenu, self._submenuColor) + '\n')
+        for option in options:
+            menu[option] = options[option]
 
+        # adding options in the current submenu
+        if path == self._currentPath:
+            self.updateList(list(self._currentMenu.keys()))
+    
     
     def selectOption(selectedOption: str, newSelectedOption: str, options: list[str], padding: bool = True, selectText: str = "(selected)"):
         """Creates the changes dictionary for when a single selectable option is chosen.

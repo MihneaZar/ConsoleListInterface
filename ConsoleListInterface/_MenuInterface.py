@@ -219,6 +219,30 @@ class MenuInterface(ConsoleListInterface):
         if path == self._currentPath:
             self.updateList(list(self._currentMenu.keys()))
 
+    def removeOptions(self, path: list[str], options: list[str]):
+        """Remove options from a submenu.
+
+        Important note: removing a previous submenu in the current path that is not the current submenu will create undefined behaviour,
+        most likely crashing the program.
+
+        Args:
+            path (list[str]): path to the menu to change.
+            options (list[str]): list of options to remove.
+
+        """
+        menu = next(iter(self._menuStructure.values()))
+        for submenu in path:
+            menu = menu[submenu]
+
+        for option in options:
+            # guardrail in case a non-existent option is added
+            if option in menu:
+                menu.pop(option)
+            
+        # if adding options in the current submenu
+        if path == self._currentPath:
+            self.updateList(list(self._currentMenu.keys()))
+
     
     def selectOption(selectedOption: str, newSelectedOption: str, options: list[str], padding: bool = True, selectText: str = "(selected)"):
         """Creates the changes dictionary for when a single selectable option is chosen.

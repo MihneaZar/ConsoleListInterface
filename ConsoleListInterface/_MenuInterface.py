@@ -192,12 +192,14 @@ class MenuInterface(ConsoleListInterface):
             return
 
                 
-    def addOptions(self, path: list[str], options: dict[str, dict]):
+    def addOptions(self, path: list[str], options: dict[str, dict], insertBefore: str = None):
         """Add options to a submenu.
 
         Args:
             path (list[str]): path to the menu to change.
             options (str: dict): dictionary with the new submenus and options.
+            insertBefore (str): if this option exists in the menu set to change, the new options will be inserted before it.
+                                Otherwise, the new options are inserted at the bottom of the menu.
 
         """
         menu = next(iter(self._menuStructure.values()))
@@ -207,7 +209,13 @@ class MenuInterface(ConsoleListInterface):
         for option in options:
             menu[option] = options[option]
 
-        # adding options in the current submenu
+        if insertBefore in menu: 
+            keys = [key for key in menu.keys() if key not in options]
+
+            for keyPos in range(keys.index(insertBefore), len(keys)):
+                menu[keys[keyPos]] = menu.pop(keys[keyPos]) 
+            
+        # if adding options in the current submenu
         if path == self._currentPath:
             self.updateList(list(self._currentMenu.keys()))
 
@@ -295,7 +303,11 @@ class MenuInterface(ConsoleListInterface):
     
 
     def getMenuStructure(self):
-        """Get the menu structure of the interface, if selectable options have been changed.
+        """Get the menu structure of the interface.
+        This is a dictionary, so it is passed by reference.
+        Therefore, changes to the structure not implemented in this class can be made directly to the menu structure dictionary.
+        
+        Important note: changes made this way could cause undefined behaviour.
         
         Returns:
             (str: dict): the dictionary structure of the menu, with some potentially changed keys (options).

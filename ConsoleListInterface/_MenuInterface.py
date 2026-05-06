@@ -6,7 +6,6 @@ from readchar import key
 import string
 
 
-
 _HELPPAGE = """Controls:
     - arrow keys -> moving between options in the current menu.
     - enter      -> if the selected item is a submenu, enter said submenu.
@@ -181,11 +180,13 @@ class MenuInterface(ConsoleListInterface):
         # changing option names in the current submenu
         if path == self._currentPath:
             self.updateList(list(self._currentMenu.keys()))
+            return
 
-        # changing name of submenu
-        if path and path == self._currentPath[:-1]:
-            self._currentPath[-1] = changes[self._currentPath[-1]]
+        # changing name of submenu in the current path
+        if path and self._currentPath[:len(path)] == path:
+            self._currentPath[len(path)] = changes[self._currentPath[len(path)]]
             self.setTopText(colored(self._currentPath[-1], self._submenuColor) + '\n')
+            return
 
                 
     def addOptions(self, path: list[str], options: dict[str, dict]):
@@ -205,8 +206,8 @@ class MenuInterface(ConsoleListInterface):
 
         # adding options in the current submenu
         if path == self._currentPath:
-            self.updateList(list(self._currentMenu.keys()))
-    
+            self.updateList(list(self._currentMenu.keys()))
+
     
     def selectOption(selectedOption: str, newSelectedOption: str, options: list[str], padding: bool = True, selectText: str = "(selected)"):
         """Creates the changes dictionary for when a single selectable option is chosen.

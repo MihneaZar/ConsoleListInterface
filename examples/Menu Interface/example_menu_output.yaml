@@ -11,10 +11,10 @@ Main Menu:
                 is: 
                 Another: 
                 Level: 
-            Hard: 
-            Normal (selected): 
+            Hard   (selected): 
+            Normal: 
             Easy: 
-        Sound (50%):
+        Sound (70%):
             This is to show that you can have selectable options *and* submenus in the same menu:
                 This: 
                 is: 
@@ -28,7 +28,7 @@ Main Menu:
                 is: 
                 Another: 
                 Level: 
-            Big Head Mode: 
+            Big Head Mode x: 
             Invincibility: 
-            Score x10: 
+            Score x10     x: 
     Quit: 

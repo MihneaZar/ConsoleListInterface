@@ -185,7 +185,10 @@ class MenuInterface(ConsoleListInterface):
         # changing name of submenu in the current path
         if path and self._currentPath[:len(path)] == path:
             self._currentPath[len(path)] = changes[self._currentPath[len(path)]]
-            self.setTopText(colored(self._currentPath[-1], self._submenuColor) + '\n')
+
+            # changing name of current submenu
+            if len(self._currentPath) == len(path) + 1:
+                self.setTopText(colored(self._currentPath[-1], self._submenuColor) + '\n')
             return
 
                 

@@ -338,3 +338,59 @@ class MenuInterface(ConsoleListInterface):
         
         """
         return self._menuStructure
+    
+
+    def helpMenu(helpPages: dict[str: str | list[str]], titleColor: Union[str, tuple[int, int, int]] = 'blue', 
+                 helpOptionColor: Union[str, tuple[int, int, int]] = 'light_blue', supressColorWarning: bool = False, title: str = "Help page"):
+        """Runs a help menu page, which splits all the command explanations into categories.
+        Example uses of this function can be found at https://github.com/MihneaZar/dir-explorer and https://github.com/MihneaZar/link-master.
+            
+        Args:
+            helpPages (str: str | list[str]): a dictionary where the keys represent the separate help pages / categories, and the values represent the info text to be printed.
+                                              If the value is given as a list of strings, will print each string on a separate line. If string, it will simply print the string.
+                                              The function will automatically append ':' to category title when in the help page of the category, if it doesn't already have punctuation.
+            
+            submenuColor (str | (int, int, int)): the color for printing the help menu title, equivalent to submenuColor from the init of the class.
+                                                  If string, must be compatible with termcolor.colored.
+                                                  If int tuple, it will be the RGB values.
+            submenuColor (str | (int, int, int)): the color for printing the help menu categories, equivalent to optionColor from the init of the class.
+                                                  If string, must be compatible with termcolor.colored.
+                                                  If int tuple, it will be the RGB values.
+
+            supressColorWarning (bool): set this to True if the 'grey' color option prints visibly in the terminal, 
+                                        in order to ignore the warning for it.                  
+
+            title (str): the title of the help page, by default simply "Help page".
+            
+        """
+        # concatenating list of strings into a single string with '\n' between elements
+        printHelpPages = {page: "\n".join(helpPages[page]) if isinstance(helpPages[page], list) else helpPages[page] for page in helpPages}
+
+        # adding category title to help page
+        for page in printHelpPages:
+            categoryTitle = page
+            if categoryTitle[-1] not in "?:.!":
+                categoryTitle += ':'
+
+            categoryTitle = colored(categoryTitle, helpOptionColor)
+            printHelpPages[page] = categoryTitle + "\n\n" + printHelpPages[page]
+
+        menuStructure = {title: {helpPage: None for helpPage in helpPages}}
+        menuStructure[title]["Exit"] = None
+
+        menu = MenuInterface(menuStructure, titleColor, helpOptionColor, supressColorWarning)
+
+        while True:
+            path = menu.interactWithMenu()
+
+            # ignoring backspace
+            if not path:
+                continue
+
+            path = path[0]
+
+            if path in printHelpPages:
+                menu.separateInteraction(message=printHelpPages[path] + '\n', startAtTop=True)
+
+            if path == "Exit":
+                return

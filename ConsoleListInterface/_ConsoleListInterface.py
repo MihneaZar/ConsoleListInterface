@@ -559,8 +559,13 @@ class ConsoleListInterface:
         
         text += '\n'
 
+        prevLines = self._getLinesOfSetText()
+
+        self._topText = text
+        self._itemsPerColumn = os.get_terminal_size()[1] - 2 - self._getLinesOfSetText() + 1 # help page message, then startPrintLine
+
         # if the new top text has the same number of lines as the old text, the list will be printed starting at the same line (so no need to reprint)
-        if self._topText.count('\n') == text.count('\n'):
+        if prevLines == self._getLinesOfSetText():
             # cleaning previous text
             moveCursor(0, 0)
             for line in range(self._topText.count('\n')):
@@ -568,10 +573,7 @@ class ConsoleListInterface:
 
             moveCursor(0, 0)
             print(text)
-            dontPrintList = True
-
-        self._topText = text
-        self._itemsPerColumn = os.get_terminal_size()[1] - 2 - self._getLinesOfSetText() + 1 # help page message, then 
+            return
         
         if not dontPrintList:
             self.printList()

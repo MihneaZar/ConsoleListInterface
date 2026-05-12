@@ -31,7 +31,7 @@ Note: to simplify the implementation, the options are string-key dictionary entr
 - [This example](examples/Random%20Selector) is how the class can be used for a simple visual random selector; 
 - [This example](examples/Menu%20Interface) is how the MenuInterface class can be used for a simple menu implementation
 
-## Extra Info
+## Additional Information
 Class functions are explained in the comments. <br>
 Only tested on Windows 11.
 

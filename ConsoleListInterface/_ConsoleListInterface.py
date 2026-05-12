@@ -141,7 +141,8 @@ class ConsoleListInterface:
             int: the number of lines of the text set at the top.
 
         """
-        return self._topText.count('\n') + len([line for line in self._topText.split('\n') if len(line) > os.get_terminal_size()[0]]) + 1
+        # fixed this calculation, for each separate line, it's the number of times it is over the terminal width
+        return self._topText.count('\n') + sum([(len(line) // os.get_terminal_size()[0]) for line in self._topText.split('\n')]) + 1
 
 
     def printList(self):

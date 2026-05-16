@@ -6,13 +6,34 @@ from readchar import key
 import string
 
 
-_HELPPAGE = """Controls:
+_HELPPAGEMAIN = """Controls:
+    - arrow keys -> moving between options in the current menu.
+    - enter      -> if the selected item is a submenu, enter said submenu.
+                 -> if the selected item is an option, choose said option.
+    - ctrl+u     -> update printed menu (if the menu or the console size was changed).
+    - '?'        -> display current help page.
+    - escape     -> exit menu (also backspace).
+"""
+
+# help page for submenu when escOnAnyMenu is False
+_HELPPAGESUB = """Controls:
     - arrow keys -> moving between options in the current menu.
     - enter      -> if the selected item is a submenu, enter said submenu.
                  -> if the selected item is an option, choose said option.
     - backspace  -> return to previous menu.
     - ctrl+u     -> update printed menu (if the menu or the console size was changed).
     - '?'        -> display current help page.
+"""
+
+# help page for submenu when escOnAnyMenu is True
+_HELPPAGESUBESC = """Controls:
+    - arrow keys -> moving between options in the current menu.
+    - enter      -> if the selected item is a submenu, enter said submenu.
+                 -> if the selected item is an option, choose said option.
+    - backspace  -> return to previous menu.
+    - ctrl+u     -> update printed menu (if the menu or the console size was changed).
+    - '?'        -> display current help page.
+    - escape     -> exit menu.
 """
 
 class MenuInterface(ConsoleListInterface):
@@ -76,7 +97,7 @@ class MenuInterface(ConsoleListInterface):
         # rebinds to nothing for all the unused ConsoleListInterface internal commands
         rebindUnused = {command: "" for command in MenuInterface._INTERNALCOMMANDS if command not in MenuInterface._KEEPCOMMANDS}
         
-        super(MenuInterface, self).__init__(items=list(self._currentMenu.keys()), specialCommands=self._SPECIALCOMMANDS, helpPage=_HELPPAGE, rebindCommand=rebindUnused, dontPrintList=True, # the list will be reprinted anyway in setTopText
+        super(MenuInterface, self).__init__(items=list(self._currentMenu.keys()), specialCommands=self._SPECIALCOMMANDS, helpPage=_HELPPAGEMAIN, rebindCommand=rebindUnused, dontPrintList=True, # the list will be reprinted anyway in setTopText
                                             printFunc=lambda optionName, maxNameWidth: MenuInterface._menuPrintFunc(optionName, maxNameWidth, self._currentMenu, submenuColor, optionColor))
 
         self.setTopText(colored(next(iter(menuStructure.keys())), self._submenuColor) + '\n', dontPrintList=dontPrintMenu) # Main Menu name
@@ -129,6 +150,10 @@ class MenuInterface(ConsoleListInterface):
                 if not self._currentMenu[optionName]:
                     return self._currentPath + [optionName]
 
+                # changing from main menu help page to submenu help page
+                if self._currentPath == []:
+                    self.configure(helpPage=_HELPPAGESUB if not self._escOnAnyMenu else _HELPPAGESUBESC)
+
                 self._currentMenu = self._currentMenu[optionName]
                 self._currentPath.append(optionName) 
                 self.updateList(list(self._currentMenu.keys()))
@@ -151,6 +176,10 @@ class MenuInterface(ConsoleListInterface):
                 self.updateList(list(self._currentMenu.keys()))
                 self.updatePos(self._items.index(submenuName))
                 self.setTopText(colored(menuName, self._submenuColor) + '\n')
+
+                # changing to main menu help page when returning to it
+                if self._currentPath == []:
+                    self.configure(helpPage=_HELPPAGEMAIN)
 
                 return self._currentPath # returning current path, for title changes
                 
@@ -391,7 +420,7 @@ class MenuInterface(ConsoleListInterface):
         while True:
             path = menu.interactWithMenu()
 
-            # ignoring backspace
+            # ignoring backspace to main menu
             if not path:
                 continue
 
@@ -400,5 +429,5 @@ class MenuInterface(ConsoleListInterface):
             if path in printHelpPages:
                 menu.separateInteraction(message=printHelpPages[path] + '\n', startAtTop=True)
 
-            if path == "Exit":
+            if path in ["Exit", key.ESC, key.BACKSPACE]:
                 return

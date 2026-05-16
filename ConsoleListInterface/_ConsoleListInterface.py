@@ -31,7 +31,7 @@ class ConsoleListInterface:
 
     While in most cases it would make more sense for the list items to be sorted, they do not have to be.
     The list can have repeat values, next to each other or otherwise.
-    Any newlines in item names are ignored because that causes undefined behaviour.
+    Any newlines in item names are ignored because they cause undefined behaviour.
 
     Important note: All commands are changed to and treated in lowercase, to avoid confusion.
     """
@@ -148,8 +148,8 @@ class ConsoleListInterface:
     def printList(self):
         """Printing the items of the list that are currently in focus.
         
-        As long as all printing to console is done only through the same ConsoleListInterface, the methods reprint the list automatically every time it is necessary. 
-        Therefore, this method should only be used if printing is done from a different source, including another ConsoleListInterface object.
+        As long as all printing outside a ConsoleListInterface is done through the separateInteraction function, 
+        the interface will reprint the list automatically.
         """
         cls()
         moveCursor(0, 0)

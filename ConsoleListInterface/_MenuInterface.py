@@ -23,8 +23,8 @@ class MenuInterface(ConsoleListInterface):
     
     """
 
-    # overwritting searching by first letter and adding enter for choosing submenu/option and backspace for returning to previous menu
-    _SPECIALCOMMANDS = list(string.ascii_lowercase) + [key.ENTER, key.BACKSPACE]
+    # overwritting searching by first letter and adding esc, enter for choosing submenu/option and backspace for returning to previous menu
+    _SPECIALCOMMANDS = list(string.ascii_lowercase) + list(string.digits) + list(string.punctuation) + [key.ESC, key.ENTER, key.BACKSPACE]
     
     # only internal commands used by this class extension
     _KEEPCOMMANDS = [key.UP, key.DOWN, key.LEFT, key.RIGHT, key.CTRL_U, '?']
@@ -34,7 +34,7 @@ class MenuInterface(ConsoleListInterface):
 
 
     def __init__(self, menuStructure: dict[str, dict], submenuColor: Union[str, tuple[int, int, int]] = 'blue', optionColor: Union[str, tuple[int, int, int]] = 'light_blue', 
-                 supressColorWarning: bool = False, dontPrintMenu: bool = False):
+                 supressColorWarning: bool = False, dontPrintMenu: bool = False, escOnAnyMenu: bool = False):
         """Intializes console interface.
 
         Args:
@@ -53,7 +53,9 @@ class MenuInterface(ConsoleListInterface):
             supressColorWarning (bool): set this to True if the 'grey' color option prints visibly in the terminal, 
                                         in order to ignore the warning for it.
 
-            dontPrintMenu (bool): set True to stop the Main Menu from being printed on __init__.
+            dontPrintMenu (bool): set to True to stop the Main Menu from being printed on __init__.
+
+            escOnAnyMenu (bool): set to True to accept key.ESC on any submenu, not just the main menu.  
 
         Returns: 
             A MenuInterface object.
@@ -69,6 +71,7 @@ class MenuInterface(ConsoleListInterface):
         self._currentPath   = []
         self._currentMenu   = next(iter(menuStructure.values())) # obtaining Main Menu
         self._submenuColor  = submenuColor
+        self._escOnAnyMenu  = escOnAnyMenu
         
         # rebinds to nothing for all the unused ConsoleListInterface internal commands
         rebindUnused = {command: "" for command in MenuInterface._INTERNALCOMMANDS if command not in MenuInterface._KEEPCOMMANDS}
@@ -114,6 +117,11 @@ class MenuInterface(ConsoleListInterface):
         while True:
             command, position = self.interact()
 
+            if command == key.ESC:
+                # checking if it is on main menu, or if escOnAnyMenu is set to True
+                if self._currentPath == [] or self._escOnAnyMenu:
+                    return [key.ESC]
+
             if command == key.ENTER:
                 optionName = self._items[position]
 
@@ -131,7 +139,7 @@ class MenuInterface(ConsoleListInterface):
 
             if command == key.BACKSPACE:
                 if self._currentPath == []:
-                    return self._currentPath
+                    return [key.BACKSPACE]
 
                 submenuName = self._currentPath.pop()
                 self._currentMenu = next(iter(self._menuStructure.values()))

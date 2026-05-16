@@ -2,6 +2,7 @@ from ConsoleListInterface._cli_utils import moveCursor, lowercaseKey, waitForEnt
 from typing import Callable, Any, Optional
 from readchar import readkey, key
 from math import ceil as roundup
+from time import sleep
 import cursor
 import os
 
@@ -431,7 +432,8 @@ class ConsoleListInterface:
 
                 continue
 
-    def separateInteraction(self, message: Optional[str] = None, function: Optional[Callable[[Any], Any]] = None, functionArgs: Optional[Any] = None, startAtTop: bool = False, showCursor: bool = False):
+    def separateInteraction(self, message: Optional[str] = None, function: Optional[Callable[[Any], Any]] = None, functionArgs: Optional[Any] = None, 
+                            startAtTop: bool = False, showCursor: bool = False, waitInsteadOfEnter: float = None):
         """This method is for user interaction separate from the list interface.
         Once finished, it will reprint the list.
         
@@ -441,10 +443,11 @@ class ConsoleListInterface:
             functionArgs (Any): arguments for function.
             startAtTop (bool): instead of starting at _separateInteractionPos, the printing starts at the top of the console.
             showCursor (bool): show cursor during interaction.
+            waitInsteadOfEnter (float): for interactions that are only a message, wait this many seconds before returning to the list interface.
 
         """
-
-        cls()
+    
+        cls() 
 
         if showCursor:
             cursor.show()
@@ -457,9 +460,12 @@ class ConsoleListInterface:
         if message:
             print(message)
             if not function:
-                cursor.hide()
-                print("Press enter to continue.\n")
-                waitForEnter()
+                if not waitInsteadOfEnter:
+                    print("Press enter to continue.\n")
+                    waitForEnter()
+                
+                else:
+                    sleep(waitInsteadOfEnter)
 
         functionReturn = None
 

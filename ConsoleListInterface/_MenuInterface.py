@@ -45,7 +45,7 @@ class MenuInterface(ConsoleListInterface):
     """
 
     # overwritting searching by first letter and adding esc, enter for choosing submenu/option and backspace for returning to previous menu
-    _SPECIALCOMMANDS = list(string.ascii_lowercase) + list(string.digits) + list(string.punctuation) + [key.ESC, key.ENTER, key.BACKSPACE]
+    _SPECIALCOMMANDS = list(string.ascii_lowercase) + list(string.digits) + list(string.punctuation.replace('?', '')) + [key.ESC, key.ENTER, key.BACKSPACE]
     
     # only internal commands used by this class extension
     _KEEPCOMMANDS = [key.UP, key.DOWN, key.LEFT, key.RIGHT, key.CTRL_U, '?']

@@ -619,7 +619,7 @@ class ConsoleListInterface:
             self._commandBind     = {command: (self._commandBind[command] if command not in rebindCommand else lowercaseKey(rebindCommand[command])) for command in self._commandBind}
             self._actualCommands  = self._commandBind.values() # all the values that internal commands are bound to
 
-    def toggleHelpPage(self, disableHelp: Optional[bool] = None):
+    def disableHelpPage(self, disableHelp: Optional[bool] = None):
         """Change whether the "Type '?' for help page." message is shown and the help page is printed.
 
         Args:
@@ -627,11 +627,12 @@ class ConsoleListInterface:
                                 Otherwise it will be changed to the bool value of disableHelp.
         
         """
-
         if disableHelp:
             self._disableHelp = disableHelp
         else:
             self._disableHelp = not self._disableHelp
+
+        self.printList() # reprint list to hide/unhide the "Type '?' for help page." message 
 
 
     def exitInterface(self):

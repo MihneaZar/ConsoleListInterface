@@ -6,7 +6,8 @@ from readchar import key
 import string
 
 
-_HELPPAGEMAIN = """Controls:
+_HELPPAGEMAIN = """Menu controls:
+
     - arrow keys -> moving between options in the current menu.
     - enter      -> if the selected item is a submenu, enter said submenu.
                  -> if the selected item is an option, choose said option.
@@ -16,7 +17,8 @@ _HELPPAGEMAIN = """Controls:
 """
 
 # help page for submenu when escOnAnyMenu is False
-_HELPPAGESUB = """Controls:
+_HELPPAGESUB = """Menu controls:
+
     - arrow keys -> moving between options in the current menu.
     - enter      -> if the selected item is a submenu, enter said submenu.
                  -> if the selected item is an option, choose said option.
@@ -26,7 +28,8 @@ _HELPPAGESUB = """Controls:
 """
 
 # help page for submenu when escOnAnyMenu is True
-_HELPPAGESUBESC = """Controls:
+_HELPPAGESUBESC = """Menu controls:
+
     - arrow keys -> moving between options in the current menu.
     - enter      -> if the selected item is a submenu, enter said submenu.
                  -> if the selected item is an option, choose said option.
@@ -416,6 +419,7 @@ class MenuInterface(ConsoleListInterface):
         menuStructure[title]["Exit"] = None
 
         menu = MenuInterface(menuStructure, titleColor, helpOptionColor, supressColorWarning)
+        menu.disableHelpPage(True) # help page in help menu is a bit confusing
 
         while True:
             path = menu.interactWithMenu()

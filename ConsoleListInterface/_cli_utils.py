@@ -40,12 +40,18 @@ def autocomplete(autocompleteList: list[str] = [], prompt: str = "", inputColor:
             print()
             return string
 
-        # exiting by pressing Esc, if active
-        if char == key.ESC and exitOnEsc:
-            return None
-
         # tab and backspace are treated separately from the other characters
+        # (esc is ignored if exitOnEsc is False)
         printChar = True
+
+        # exiting by pressing Esc
+        if char == key.ESC: 
+            # exit if active
+            if exitOnEsc:
+                return None
+            # otherwise ignore the character
+            else: 
+                printChar = False
 
         # removing previous autocomplete
         print(' ' * len(lastAutocomplete) + '\b' * len(lastAutocomplete), end = '', flush=True)

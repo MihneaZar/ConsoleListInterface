@@ -4,48 +4,6 @@ from typing import Union
 import sys
 import os 
 
-def moveCursor(y: int, x: int):
-    """Function for moving the cursor to a different position in the console.
-
-    Args:
-        y (int): column in console (characters).
-        x (int): line in console (characters).
-
-    """
-
-    sys.stdout.write("\033[%d;%dH" % (max(y, 0), max(x, 0)))
-
-# clear screen function
-cls = lambda: os.system('cls' if os.name=='nt' else 'clear')
-
-# set title of terminal window
-def setTitle(title): 
-    try:
-        if os.name=='nt':
-            os.system(f'title {title}')  
-        else:
-            sys.stdout.write(f"\x1b]2;{title}\x07")
-    except:
-        pass
-
-def lowercaseKey(key: str):
-    """Transforms a key to lowercase without affecting multi-character keys like the arrows.
-
-    Args:
-        key (str): key to convert.
-
-    Returns:
-        str: key converted to lowercase.
-        
-    """
-
-    return key.lower() if len(key) == 1 else key
-
-def waitForEnter():
-    """Waits for the enter key to be pressed (for "Press enter to continue" messages)."""
-    while not readchar() == key.ENTER:
-        pass
-
 def autocomplete(autocompleteList: list[str], inputColor: Union[str, tuple[int, int, int]] = "light_grey", 
                  autocompleteColor: Union[str, tuple[int, int, int]] = "white", exitOnEsc: bool = False):
     """Function for console input with autocomplete feature.
@@ -110,4 +68,50 @@ def autocomplete(autocompleteList: list[str], inputColor: Union[str, tuple[int, 
             print(colored(lastAutocomplete, autocompleteColor), end='', flush=True)
             print("\b" * len(lastAutocomplete), end='', flush=True)
 
+def moveCursor(y: int, x: int):
+    """Function for moving the cursor to a different position in the console.
 
+    Args:
+        y (int): column in console (characters).
+        x (int): line in console (characters).
+
+    """
+
+    sys.stdout.write("\033[%d;%dH" % (max(y, 0), max(x, 0)))
+
+# clear screen function
+cls = lambda: os.system('cls' if os.name=='nt' else 'clear')
+
+def setTitle(title: str): 
+    """Sets the title of the console window.
+
+    Args:
+        title (str): the title for the window.
+    
+    """
+
+    try:
+        if os.name=='nt':
+            os.system(f'title {title}')  
+        else:
+            sys.stdout.write(f"\x1b]2;{title}\x07")
+    except:
+        pass
+
+def lowercaseKey(key: str):
+    """Transforms a key to lowercase without affecting multi-character keys like the arrows.
+
+    Args:
+        key (str): key to convert.
+
+    Returns:
+        str: key converted to lowercase.
+        
+    """
+
+    return key.lower() if len(key) == 1 else key
+
+def waitForEnter():
+    """Waits for the enter key to be pressed (for "Press enter to continue" messages)."""
+    while not readchar() == key.ENTER:
+        pass

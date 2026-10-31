@@ -21,10 +21,12 @@ The example includes possible implementations for single-select options, multi-s
 Note: to simplify the implementation, the options are string-key dictionary entries with a None or an empty string value (instead of simply being a string, since mixing strings with dicts that way would get quite stuffy and confusing).  
 
 ## Additional Functions
-- moveCursor(y: int, x: int) -> places the console cursor at given position (implementation might not work in all console environments);
-- lowercaseKey(key: str)     -> transforms key to lowercase for case-insensitive searches, without changing multi-character keys (like the arrow keys);
-- waitForEnter()             -> function for waiting specifically for enter to be pressed (also using readchar);
-- cls()                      -> clears the screen (should work both on Windows and Linux).
+- autocomplete -> function for console input with autocomplete feature;
+- moveCursor -> places the console cursor at given position (implementation might not work in all console environments);
+- cls -> clears the screen (should work both on Windows and Linux);
+- setTitle -> sets the title of the console window (might not work);
+- lowercaseKey -> transforms key to lowercase for case-insensitive searches, without changing multi-character keys (like the arrow keys);
+- waitForEnter -> function for waiting specifically for enter to be pressed (also using readchar).
 
 ## Example Usages
 - [This example](examples/Simple%20Console%20Interface) is the simplest version of using the ConsoleListInterface class;

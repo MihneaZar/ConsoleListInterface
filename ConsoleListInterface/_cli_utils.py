@@ -19,7 +19,14 @@ def moveCursor(y: int, x: int):
 cls = lambda: os.system('cls' if os.name=='nt' else 'clear')
 
 # set title of terminal window
-setTitle = (lambda title: os.system(f'title {title}')) if os.name=='nt' else (sys.stdout.write(f"\x1b]2;{title}\x07"))
+def setTitle(title): 
+    try:
+        if os.name=='nt':
+            os.system(f'title {title}')  
+        else:
+            sys.stdout.write(f"\x1b]2;{title}\x07")
+    except:
+        pass
 
 def lowercaseKey(key: str):
     """Transforms a key to lowercase without affecting multi-character keys like the arrows.

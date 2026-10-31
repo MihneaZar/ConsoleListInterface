@@ -1,4 +1,6 @@
 from readchar import readchar, key
+from termcolor import colored
+from typing import Union
 import sys
 import os 
 
@@ -36,5 +38,69 @@ def waitForEnter():
     """Waits for the enter key to be pressed (for "Press enter to continue" messages)."""
     while not readchar() == key.ENTER:
         pass
+
+def autocomplete(autocompleteList: list[str], inputColor: Union[str, tuple[int, int, int]] = "light_grey", 
+                 autocompleteColor: Union[str, tuple[int, int, int]] = "white", exitOnEsc: bool = False):
+    """Function for console input with autocomplete feature.
+    
+    Args:
+        autocompleteList (list[str]): list of possible autocomplete candidates.
+
+        inputColor (str | (int, int, int)): the color for the user-inputed text (the default is the standard console light gray).
+                                            If string, must be compatible with termcolor.colored.
+                                            If int tuple, it will be the RGB values.
+
+        autocompleteColor(str | (int, int, int)): the color for the autocomplete text (default is white).
+                                                  If string, must be compatible with termcolor.colored.
+                                                  If int tuple, it will be the RGB values.
+
+        exitOnEsc (bool): allows exiting this function by pressing ESC (function returns None).
+    
+    Returns:
+        The entered input, or None if Esc was pressed and exitOnEsc is True.
+    
+    """
+    
+    lastAutocomplete = ""
+    string = ""
+    while True: 
+        char = readchar()
+
+        # confirmed input
+        if char == key.ENTER:
+            return string
+
+        # exiting by pressing Esc, if active
+        if char == key.ESC and exitOnEsc:
+            return None
+
+        # tab and backspace are treated separately from the other characters
+        printChar = True
+
+        # removing previous autocomplete
+        print(' ' * len(lastAutocomplete) + '\b' * len(lastAutocomplete), end = '', flush=True)
+
+        # tab (for autocomplete)
+        if char == key.TAB:
+            string += lastAutocomplete
+            print(colored(lastAutocomplete, inputColor), end='', flush=True)
+            printChar = False
+
+        # backspace
+        if char == key.BACKSPACE:
+            string = string[:-1]
+            print("\b \b", end='', flush=True)
+            printChar = False
+
+        # normal char to be printed
+        if printChar:
+            print(colored(char, inputColor), end='', flush=True)
+            string += char
+
+        # update autocomplete and print it
+        if string:
+            lastAutocomplete = next((complete for complete in autocompleteList if complete.startswith(string)), "")[len(string):]
+            print(colored(lastAutocomplete, autocompleteColor), end='', flush=True)
+            print("\b" * len(lastAutocomplete), end='', flush=True)
 
 

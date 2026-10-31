@@ -52,12 +52,12 @@ class ConsoleListInterface:
     _INTERNALCOMMANDS = [key.UP, key.DOWN, key.LEFT, key.RIGHT, key.CTRL_F, '\\', key.CTRL_N, key.CTRL_R, key.DELETE, key.CTRL_U, '=', '-', '?']
 
 
-    def defaultPrintFunc(item, maxNameWidth):
+    def defaultPrintFunc(item: str, maxNameWidth: int):
         """Default printing function for item names.
 
         Args:
             item (str): the full name of the item.
-            maxNameWidth: the total number of characters that the printed name can have (otherwise it will get cut-off).
+            maxNameWidth (int): the total number of characters that the printed name can have (otherwise it will get cut-off).
 
         Returns:
             The truncated name.

@@ -58,8 +58,11 @@ def autocomplete(autocompleteList: list[str] = [], prompt: str = "", inputColor:
 
         # backspace
         if char == key.BACKSPACE:
-            string = string[:-1]
-            print("\b \b", end='', flush=True)
+            if string != "": # only allow backspace when string is not empty!!
+                print(len(string))
+                string = string[:-1]
+                print("\b \b", end='', flush=True)
+                    
             printChar = False
 
         # normal char to be printed

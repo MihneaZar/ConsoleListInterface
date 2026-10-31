@@ -4,12 +4,14 @@ from typing import Union
 import sys
 import os 
 
-def autocomplete(autocompleteList: list[str], inputColor: Union[str, tuple[int, int, int]] = "light_grey", 
+def autocomplete(autocompleteList: list[str] = [], prompt: str = "", inputColor: Union[str, tuple[int, int, int]] = "light_grey", 
                  autocompleteColor: Union[str, tuple[int, int, int]] = "white", exitOnEsc: bool = False):
     """Function for console input with autocomplete feature.
     
     Args:
         autocompleteList (list[str]): list of possible autocomplete candidates.
+
+        prompt (str): the prompt for the user input.
 
         inputColor (str | (int, int, int)): the color for the user-inputed text (the default is the standard console light gray).
                                             If string, must be compatible with termcolor.colored.
@@ -25,6 +27,8 @@ def autocomplete(autocompleteList: list[str], inputColor: Union[str, tuple[int, 
         The entered input, or None if Esc was pressed and exitOnEsc is True.
     
     """
+
+    print(prompt, end='', flush=True)
     
     lastAutocomplete = ""
     string = ""
@@ -33,6 +37,7 @@ def autocomplete(autocompleteList: list[str], inputColor: Union[str, tuple[int, 
 
         # confirmed input
         if char == key.ENTER:
+            print()
             return string
 
         # exiting by pressing Esc, if active

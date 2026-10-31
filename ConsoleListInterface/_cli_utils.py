@@ -77,7 +77,9 @@ def autocomplete(autocompleteList: list[str] = [], prompt: str = "", inputColor:
 
         # update autocomplete and print it
         if string:
-            lastAutocomplete = next((complete for complete in autocompleteList if complete.startswith(string)), "")[len(string):]
+            # searches for first autocomplete option that starts with the inputted string
+            # the string != complete is so that when the string is one of the existing options, it autocompletes to the next match
+            lastAutocomplete = next((complete for complete in autocompleteList if complete.startswith(string) and string != complete), "")[len(string):]
             print(colored(lastAutocomplete, autocompleteColor), end='', flush=True)
             print("\b" * len(lastAutocomplete), end='', flush=True)
 

@@ -1,4 +1,4 @@
-from ConsoleListInterface._cli_utils import moveCursor, lowercaseKey, waitForEnter, cls, setTitle
+from ConsoleListInterface._cli_utils import moveCursor, lowercaseKey, waitForEnter, cls, setTitle, autocomplete
 from typing import Callable, Any, Optional
 from readchar import readkey, key
 from math import ceil as roundup
@@ -264,7 +264,8 @@ class ConsoleListInterface:
                     cls()
                     moveCursor(self._separateInteractionPos, 0)
                     cursor.show()
-                    self._searchStr = input("String to search by:\n").lower()
+                    # using autocomplete for the ctrl+f search function
+                    self._searchStr = autocomplete(self._items, "String to search by:\n").lower()
                     cursor.hide()
                     cls()
                     reprint = True

@@ -576,8 +576,8 @@ class ConsoleListInterface:
         if prevLines == self._getLinesOfSetText():
             # cleaning previous text
             moveCursor(0, 0)
-            for line in range(self._topText.count('\n')):
-                print(' ' * os.get_terminal_size()[1])
+            for _ in range(self._topText.count('\n')):
+                print(' ' * os.get_terminal_size()[0])
 
             moveCursor(0, 0)
             print(text)

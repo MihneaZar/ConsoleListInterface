@@ -101,7 +101,9 @@ def main():
             menu.changeOptionNames(path[:-2], {volume_key: volume_value})
 
 
-        if 2 <= len(path) and path[-2] == "Extras":
+        # for single-option and multiple-option choices, the path returned will contain the selection character/text (in this case, 'x')
+        # therefore, to check if the path returned is one of the options, the startswith function needs to be used  
+        if len(path) == 3 and path[-2] == "Extras" and any((path[-1].startswith(extra) for extra in EXTRAS)):
             selected_extra = next((extra for extra in EXTRAS if path[-1].startswith(extra)))
 
             changes = MenuInterface.selectMultipleOptions(selected_extras, selected_extra, EXTRAS, 'x')

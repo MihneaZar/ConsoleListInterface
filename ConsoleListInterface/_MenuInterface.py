@@ -53,12 +53,9 @@ class MenuInterface(ConsoleListInterface):
     # only internal commands used by this class extension
     _KEEPCOMMANDS = [key.UP, key.DOWN, key.LEFT, key.RIGHT, key.CTRL_U, '?']
 
-    # setting collumn number to 1
-    _STARTCOLUMNNO = 1
-
 
     def __init__(self, menuStructure: dict[str, dict], submenuColor: Union[str, tuple[int, int, int]] = 'blue', optionColor: Union[str, tuple[int, int, int]] = 'light_blue', 
-                 supressColorWarning: bool = False, dontPrintMenu: bool = False, escOnAnyMenu: bool = False):
+                 supressColorWarning: bool = False, dontPrintMenu: bool = False, escOnAnyMenu: bool = False, columnNo: int = 1):
         """Intializes console interface.
 
         Args:
@@ -79,7 +76,11 @@ class MenuInterface(ConsoleListInterface):
 
             dontPrintMenu (bool): set to True to stop the Main Menu from being printed on __init__.
 
-            escOnAnyMenu (bool): set to True to accept key.ESC on any submenu, not just the main menu.  
+            escOnAnyMenu (bool): set to True to accept key.ESC on any submenu, not just the main menu.
+
+            columnNo (int): set the number of possible columns for the menu interface.
+                            If too high, submenu and option names will be truncated.
+                            By default, it is 1, to allow for longest possible names. 
 
         Returns: 
             A MenuInterface object.
@@ -96,6 +97,7 @@ class MenuInterface(ConsoleListInterface):
         self._currentMenu   = next(iter(menuStructure.values())) # obtaining Main Menu
         self._submenuColor  = submenuColor
         self._escOnAnyMenu  = escOnAnyMenu
+        self._STARTCOLUMNNO = columnNo
         
         # rebinds to nothing for all the unused ConsoleListInterface internal commands
         rebindUnused = {command: "" for command in MenuInterface._INTERNALCOMMANDS if command not in MenuInterface._KEEPCOMMANDS}
@@ -115,7 +117,7 @@ class MenuInterface(ConsoleListInterface):
             currentMenu (str: dict): the structure of the current menu (since it's a dictionary, Python passes it by reference - sort-of: https://stackoverflow.com/a/15078615/31936209).
             submenuColor (str | (int, int, int)): the color for printing submenu names.
             optionColor (str | (int, int, int)): the color for printing option names. 
-            ignoreMaxWidth (bool): since the menus aren't likely to have more options than the height of the terminal, the cut-off is ignored by default.   
+            ignoreMaxWidth (bool): since the submenu and option names are unlikely to be longer than the console width, the cut-off is ignored by default.   
 
         Returns:
             The truncated name.

@@ -108,7 +108,7 @@ class MenuInterface(ConsoleListInterface):
         self.setTopText(colored(next(iter(menuStructure.keys())), self._submenuColor) + '\n', dontPrintList=dontPrintMenu) # Main Menu name
     
 
-    def _menuPrintFunc(optionName: str, maxNameWidth: int, currentMenu: dict[str: Optional[dict]], submenuColor: Union[str, tuple[int, int, int]], optionColor: Union[str, tuple[int, int, int]], ignoreMaxWidth: bool = True):
+    def _menuPrintFunc(optionName: str, maxNameWidth: int, currentMenu: dict[str: Optional[dict]], submenuColor: Union[str, tuple[int, int, int]], optionColor: Union[str, tuple[int, int, int]]):#, ignoreMaxWidth: bool = True):
         """Special printing function for differentiating between submenus and options.
 
         Args:
@@ -117,14 +117,14 @@ class MenuInterface(ConsoleListInterface):
             currentMenu (str: dict): the structure of the current menu (since it's a dictionary, Python passes it by reference - sort-of: https://stackoverflow.com/a/15078615/31936209).
             submenuColor (str | (int, int, int)): the color for printing submenu names.
             optionColor (str | (int, int, int)): the color for printing option names. 
-            ignoreMaxWidth (bool): since the submenu and option names are unlikely to be longer than the console width, the cut-off is ignored by default.   
+            #ignoreMaxWidth (bool): since the submenu and option names are unlikely to be longer than the console width, the cut-off is ignored by default.   
 
         Returns:
             The truncated name.
 
         """
         isMenu = (currentMenu[optionName] != "" and currentMenu[optionName] is not None)
-        if len(optionName) <= maxNameWidth or ignoreMaxWidth:
+        if len(optionName) <= maxNameWidth:# or ignoreMaxWidth:
             optionName = optionName
         else:
             optionName = optionName[:maxNameWidth - 1] + '-'

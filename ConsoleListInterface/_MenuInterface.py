@@ -114,7 +114,7 @@ class MenuInterface(ConsoleListInterface):
         rebindUnused = {command: "" for command in MenuInterface._INTERNALCOMMANDS if command not in MenuInterface._KEEPCOMMANDS}
         
         super(MenuInterface, self).__init__(items=list(self._currentMenu.keys()), specialCommands=self._SPECIALCOMMANDS, helpPage=_HELPPAGEMAIN, rebindCommand=rebindUnused, dontPrintList=True, # the list will be reprinted anyway in setTopText
-                                            printFunc=lambda optionName, maxNameWidth: MenuInterface._menuPrintFunc(optionName, maxNameWidth, self._currentMenu, submenuColor, optionColor, truncateNames), helpColor=helpColor)
+                                            printFunc=lambda optionName, maxNameWidth: MenuInterface._menuPrintFunc(optionName, maxNameWidth, self._currentMenu, submenuColor, optionColor, truncateNames), helpSearchColor=helpColor)
 
         self.setTopText(colored(next(iter(menuStructure.keys())), self._submenuColor) + '\n', dontPrintList=dontPrintMenu) # Main Menu name
     

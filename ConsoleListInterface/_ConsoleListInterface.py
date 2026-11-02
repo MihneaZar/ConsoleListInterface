@@ -98,7 +98,7 @@ class ConsoleListInterface:
         self._topText = ""
 
         self._consoleWidth   = os.get_terminal_size()[0] 
-        self._itemsPerColumn = os.get_terminal_size()[1] - 2 - self._getLinesOfSetText() + 1 # help page message, then startPrintLine
+        self._itemsPerColumn = max(os.get_terminal_size()[1] - 2 - self._getLinesOfSetText() + 1, 1) # help page message, then startPrintLine
 
         self._separateInteractionPos = max(int(os.get_terminal_size()[1] / 2) - 4, 0)
         
@@ -165,7 +165,7 @@ class ConsoleListInterface:
             currPos = (self._column - 1) * self._itemsPerColumn + self._line - 1
 
             self._consoleWidth   = os.get_terminal_size()[0]
-            self._itemsPerColumn = os.get_terminal_size()[1] - 2 - self._getLinesOfSetText() + 1 # help page message, then startPrintLine
+            self._itemsPerColumn = max(os.get_terminal_size()[1] - 2 - self._getLinesOfSetText() + 1, 1) # help page message, then startPrintLine
             self._separateInteractionPos = max(int(os.get_terminal_size()[1] / 2) - 4, 0)
             
             self._totalColumns     = roundup(len(self._items) / self._itemsPerColumn)
@@ -574,7 +574,7 @@ class ConsoleListInterface:
         prevLines = self._getLinesOfSetText()
 
         self._topText = text
-        self._itemsPerColumn = os.get_terminal_size()[1] - 2 - self._getLinesOfSetText() + 1 # help page message, then startPrintLine
+        self._itemsPerColumn = max(os.get_terminal_size()[1] - 2 - self._getLinesOfSetText() + 1, 1) # help page message, then startPrintLine
 
         # if the new top text has the same number of lines as the old text, the list will be printed starting at the same line (so no need to reprint)
         if prevLines == self._getLinesOfSetText():

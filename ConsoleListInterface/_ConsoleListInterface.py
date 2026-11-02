@@ -634,7 +634,7 @@ class ConsoleListInterface:
         setTitle(title)
 
     def configure(self, printFunc: Optional[Callable[[str, int], int]] = None, specialCommands: list[str] = None, rebindCommand: dict[str, str] = None, helpPage: str = None,
-                  topTextColor: Union[str, tuple[int, int, int]] = None, itemColor: Union[str, tuple[int, int, int]] = None):
+                  topTextColor: Union[str, tuple[int, int, int]] = None, itemColor: Union[str, tuple[int, int, int]] = None, helpColor: Union[str, tuple[int, int, int]] = None):
         """Change one or more of the configurable functionalities.
 
         Args:
@@ -652,6 +652,10 @@ class ConsoleListInterface:
                                                   If int tuple, it will be the RGB values.
             
             itemColor (str | (int, int, int)): the color for the list items (the default is the standard console light gray).
+                                               If string, must be compatible with termcolor.colored.
+                                               If int tuple, it will be the RGB values.
+
+            helpColor (str | (int, int, int)): the color for the "Type '?' for help page." message (the default is the standard console light gray).
                                                If string, must be compatible with termcolor.colored.
                                                If int tuple, it will be the RGB values.
 
@@ -675,6 +679,9 @@ class ConsoleListInterface:
 
         if itemColor:
             self._itemColor = itemColor
+
+        if helpColor:
+            self._helpColor = helpColor
 
     def disableHelpPage(self, disableHelp: Optional[bool] = None):
         """Change whether the "Type '?' for help page." message is shown and the help page is printed.

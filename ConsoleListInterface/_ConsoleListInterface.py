@@ -181,7 +181,7 @@ class ConsoleListInterface:
         """
         cls()
         moveCursor(0, 0)
-        print(self._topText)
+        print(colored(self._topText, self._topTextColor))
 
         # console size has been changed
         if (self._consoleWidth != os.get_terminal_size()[0]) or (self._itemsPerColumn != os.get_terminal_size()[1] - 2):
@@ -613,7 +613,7 @@ class ConsoleListInterface:
                 print(' ' * os.get_terminal_size()[0])
 
             moveCursor(0, 0)
-            print(text)
+            print(colored(text, self._topTextColor))
             return
         
         if not dontPrintList:
@@ -628,15 +628,27 @@ class ConsoleListInterface:
         """
         setTitle(title)
 
-    def configure(self, printFunc: Optional[Callable[[str, int], int]] = None, specialCommands: list[str] = None, rebindCommand: dict[str, str] = None, helpPage: str = None):
+    def configure(self, printFunc: Optional[Callable[[str, int], int]] = None, specialCommands: list[str] = None, rebindCommand: dict[str, str] = None, helpPage: str = None,
+                  topTextColor: Union[str, tuple[int, int, int]] = None, itemColor: Union[str, tuple[int, int, int]] = None):
         """Change one or more of the configurable functionalities.
 
         Args:
             specialCommands (list[str]): new list of special commands, which will overwrite the original special commands list.
+
             helpPage (str): new user instructions for all application commands.
+
             printFunc ((str, int) -> str): the new function for printing the item names (str is the name and int is the cut-off for the name length).
                                            Reset the printing function by configuring it to the 'ConsoleListInterface.defaultPrintFunc' function. 
+
             rebindCommand: dict[str, str]: dictionary for rebinding internal commands (commands not in rebindCommand remain untouched).
+
+            topTextColor (str | (int, int, int)): the color for the text displayed above the list (the default is the standard console light gray).
+                                                  If string, must be compatible with termcolor.colored.
+                                                  If int tuple, it will be the RGB values.
+            
+            itemColor (str | (int, int, int)): the color for the list items (the default is the standard console light gray).
+                                               If string, must be compatible with termcolor.colored.
+                                               If int tuple, it will be the RGB values.
 
         """
 
@@ -652,6 +664,12 @@ class ConsoleListInterface:
         if rebindCommand:
             self._commandBind     = {command: (self._commandBind[command] if command not in rebindCommand else lowercaseKey(rebindCommand[command])) for command in self._commandBind}
             self._actualCommands  = self._commandBind.values() # all the values that internal commands are bound to
+
+        if topTextColor:
+            self._topTextColor = topTextColor
+
+        if itemColor:
+            self._itemColor = itemColor
 
     def disableHelpPage(self, disableHelp: Optional[bool] = None):
         """Change whether the "Type '?' for help page." message is shown and the help page is printed.

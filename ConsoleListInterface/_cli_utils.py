@@ -29,6 +29,9 @@ def autocomplete(autocompleteList: list[str] = [], prompt: str = "", inputColor:
     
     """
 
+    # removing non-string autocomplete options, just in case
+    autocompleteList = [option for option in autocompleteList if type(option) is str]
+
     print(prompt, end='', flush=True)
     
     lastAutocomplete = ""

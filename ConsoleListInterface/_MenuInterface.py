@@ -55,7 +55,7 @@ class MenuInterface(ConsoleListInterface):
 
 
     def __init__(self, menuStructure: dict[str, dict], submenuColor: Union[str, tuple[int, int, int]] = 'blue', optionColor: Union[str, tuple[int, int, int]] = 'light_blue', 
-                 supressColorWarning: bool = False, dontPrintMenu: bool = False, escOnAnyMenu: bool = False, columnNo: int = 1, truncateNames: bool = False):
+                 helpColor: Union[str, tuple[int, int, int]] = 'light_blue', supressColorWarning: bool = False, dontPrintMenu: bool = False, escOnAnyMenu: bool = False, columnNo: int = 1, truncateNames: bool = False):
         """Intializes console interface.
 
         Args:
@@ -67,9 +67,14 @@ class MenuInterface(ConsoleListInterface):
             submenuColor (str | (int, int, int)): the color for printing submenu names (default blue).
                                                   If string, must be compatible with termcolor.colored.
                                                   If int tuple, it will be the RGB values.
+
             optionColor (str | (int, int, int)): the color for printing option names (default light blue). 
-                                                  If string, must be compatible with termcolor.colored.
-                                                  If int tuple, it will be the RGB values.
+                                                 If string, must be compatible with termcolor.colored.
+                                                 If int tuple, it will be the RGB values.
+
+            helpColor (str | (int, int, int)): the color for the "Type '?' for help page." message (the default is the standard console light gray).
+                                               If string, must be compatible with termcolor.colored.
+                                               If int tuple, it will be the RGB values.
 
             supressColorWarning (bool): set this to True if the 'grey' color option prints visibly in the terminal, 
                                         in order to ignore the warning for it.
@@ -109,7 +114,7 @@ class MenuInterface(ConsoleListInterface):
         rebindUnused = {command: "" for command in MenuInterface._INTERNALCOMMANDS if command not in MenuInterface._KEEPCOMMANDS}
         
         super(MenuInterface, self).__init__(items=list(self._currentMenu.keys()), specialCommands=self._SPECIALCOMMANDS, helpPage=_HELPPAGEMAIN, rebindCommand=rebindUnused, dontPrintList=True, # the list will be reprinted anyway in setTopText
-                                            printFunc=lambda optionName, maxNameWidth: MenuInterface._menuPrintFunc(optionName, maxNameWidth, self._currentMenu, submenuColor, optionColor, truncateNames))
+                                            printFunc=lambda optionName, maxNameWidth: MenuInterface._menuPrintFunc(optionName, maxNameWidth, self._currentMenu, submenuColor, optionColor, truncateNames), helpColor=helpColor)
 
         self.setTopText(colored(next(iter(menuStructure.keys())), self._submenuColor) + '\n', dontPrintList=dontPrintMenu) # Main Menu name
     

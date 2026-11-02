@@ -78,7 +78,7 @@ class ConsoleListInterface:
 
     def __init__(self, items: list[str] = [], specialCommands: list[str] = [key.ENTER, key.ESC], helpPage: str = DEFAULTHELP, startPos: int = 0, 
                  printFunc: Callable[[str, int], int] = defaultPrintFunc, rebindCommand: dict[str, str] = {}, disableHelp: bool = False, dontPrintList: bool = False,
-                 topTextColor: Union[str, tuple[int, int, int]] = 'light_grey', itemColor: Union[str, tuple[int, int, int]] = 'light_grey'):
+                 topTextColor: Union[str, tuple[int, int, int]] = 'light_grey', itemColor: Union[str, tuple[int, int, int]] = 'light_grey', helpColor: Union[str, tuple[int, int, int]] = 'light_grey'):
         """Intializes console interface.
 
         Args:
@@ -108,6 +108,10 @@ class ConsoleListInterface:
                                                   If int tuple, it will be the RGB values.
 
             itemColor (str | (int, int, int)): the color for the list items (the default is the standard console light gray).
+                                               If string, must be compatible with termcolor.colored.
+                                               If int tuple, it will be the RGB values.
+                                               
+            helpColor (str | (int, int, int)): the color for the "Type '?' for help page." message (the default is the standard console light gray).
                                                If string, must be compatible with termcolor.colored.
                                                If int tuple, it will be the RGB values.
 
@@ -142,6 +146,7 @@ class ConsoleListInterface:
         self._disableHelp     = disableHelp
         self._topTextColor    = topTextColor
         self._itemColor       = itemColor
+        self._helpColor       = helpColor
 
         self._totalColumns      = roundup(len(self._items) / self._itemsPerColumn)
         self._lastColumnHeight  = len(self._items) % self._itemsPerColumn
@@ -235,7 +240,7 @@ class ConsoleListInterface:
         moveCursor(self._itemsPerColumn + 2 + self._getLinesOfSetText() - 1, 0)
 
         if not self._disableHelp:
-            print(f"Type '{self._commandBind['?']}' for help page.", end='', flush=True)
+            print(colored(f"Type '{self._commandBind['?']}' for help page.", self._helpColor), end='', flush=True)
 
     
     def interact(self, reprintList: bool = False) -> tuple[str, int]:

@@ -61,6 +61,9 @@ class ConsoleListInterface:
         Args:
             item (str): the full name of the item.
             maxNameWidth (int): the total number of characters that the printed name can have (otherwise it will get cut-off).
+            itemColor (str | (int, int, int)): the color for the list items.
+                                               If string, must be compatible with termcolor.colored.
+                                               If int tuple, it will be the RGB values.
 
         Returns:
             The truncated name.
@@ -213,13 +216,13 @@ class ConsoleListInterface:
         printColumn = 1
         printLine   = 1
 
+        paramNo = len(signature(self._printFunc).parameters) # calling _printFunc with the appropriate number of parameters
         for item in focusItems:
             if self._shownColumns < printColumn:
                 break
         
             moveCursor(printLine + self._getLinesOfSetText() - 1, (printColumn - 1) * (self._SPACESBEFORE + self._maxNameWidth))
 
-            paramNo = len(signature(self._printFunc).parameters) # calling _printFunc with the appropriate number of parameters
             if paramNo == 1:
                 print(f'    {self._printFunc(item)}')
             elif paramNo == 2:

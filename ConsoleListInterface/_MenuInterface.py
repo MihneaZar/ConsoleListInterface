@@ -86,7 +86,7 @@ class MenuInterface(ConsoleListInterface):
                                   If True, it will truncate names that are longer than the column width (roughly determined by console width // columnNo).
                                   If False, it will avoid truncating, but that might cause one of the following issues:
                                       - names might overflow onto the next console line (and potentially overwrite the next submenu or option);
-                                      - if columnNo is higher than 1, and the columns are too close, names might overwrite eachother. 
+                                      - if columnNo is higher than 1, and the columns are too close, names might overwrite each other. 
 
         Returns: 
             A MenuInterface object.

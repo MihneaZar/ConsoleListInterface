@@ -26,9 +26,11 @@ Note: to simplify the implementation, the options are string-key dictionary entr
 - cls -> clears the screen (should work both on Windows and Linux);
 - setTitle -> sets the title of the console window (might not work);
 - lowercaseKey -> transforms key to lowercase for case-insensitive searches, without changing multi-character keys (like the arrow keys);
+- stripANSIfromText -> strips ANSI escape codes from text (such as the codes for writing to console in different colors, or moving the cursor to specific coordinates);
 - waitForEnter -> function for waiting specifically for enter to be pressed (also using readchar).
 
 ## Example Usages
+- [This example](examples/Autocomplete) is how the function for console input with the autocomplete feature can be used;
 - [This example](examples/Simple%20Console%20Interface) is the simplest version of using the ConsoleListInterface class;
 - [This example](examples/Random%20Selector) is how the class can be used for a simple visual random selector; 
 - [This example](examples/Menu%20Interface) is how the MenuInterface class can be used for a simple menu implementation.

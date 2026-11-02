@@ -2,7 +2,8 @@ from readchar import readchar, key
 from termcolor import colored
 from typing import Union
 import sys
-import os 
+import os
+import re
 
 def autocomplete(autocompleteList: list[str] = [], prompt: str = "", inputColor: Union[str, tuple[int, int, int]] = "light_grey", 
                  autocompleteColor: Union[str, tuple[int, int, int]] = "white", exitOnEsc: bool = False):
@@ -125,6 +126,21 @@ def lowercaseKey(key: str):
     """
 
     return key.lower() if len(key) == 1 else key
+
+def stripANSIfromText(text: str):
+    """Strips ANSI escape codes from text (such as the codes for writing to console in different colors, or moving the cursor to specific coordinates).
+    
+    Args:
+        text (str): text to be stripped of ANSI escape codes.
+
+    Returns:
+        str: text stripped of ANSI escape codes.
+
+    """
+    # regular expression for ANSI escape codes
+    ansiEscape = re.compile(r'\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])')
+
+    return ansiEscape.sub('', text)
 
 def waitForEnter():
     """Waits for the enter key to be pressed (for "Press enter to continue" messages)."""

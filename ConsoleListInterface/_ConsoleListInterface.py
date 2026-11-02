@@ -1,4 +1,4 @@
-from ConsoleListInterface._cli_utils import moveCursor, lowercaseKey, waitForEnter, cls, setTitle, autocomplete
+from ConsoleListInterface._cli_utils import moveCursor, lowercaseKey, waitForEnter, cls, setTitle, autocomplete, stripANSIfromText
 from typing import Callable, Any, Optional, Union
 from readchar import readkey, key
 from math import ceil as roundup
@@ -7,7 +7,6 @@ from inspect import signature
 from time import sleep
 import cursor
 import os
-import re
 
 DEFAULTHELP = """
 This is a help page example.
@@ -169,11 +168,9 @@ class ConsoleListInterface:
             int: the number of lines of the text set at the top.
 
         """
-        # this is to remove special escape characters, like those used for colored text
-        ansi_escape = re.compile(r'\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])')
-                
         # fixed this calculation, for each separate line, it's the number of times it is over the terminal width
-        return self._topText.count('\n') + sum([(len(ansi_escape.sub('', line)) // os.get_terminal_size()[0]) for line in self._topText.split('\n')]) + 1
+        # ANSI escape codes are removed from each line, to avoid counting them as overflow (since they aren't actual characters printed to console)
+        return self._topText.count('\n') + sum([(len(stripANSIfromText(line)) // os.get_terminal_size()[0]) for line in self._topText.split('\n')]) + 1
 
 
     def printList(self):

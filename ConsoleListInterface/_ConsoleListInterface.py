@@ -1,7 +1,9 @@
 from ConsoleListInterface._cli_utils import moveCursor, lowercaseKey, waitForEnter, cls, setTitle, autocomplete
-from typing import Callable, Any, Optional
+from typing import Callable, Any, Optional, Union
 from readchar import readkey, key
 from math import ceil as roundup
+from termcolor import colored
+from inspect import signature
 from time import sleep
 import cursor
 import os
@@ -53,7 +55,7 @@ class ConsoleListInterface:
     _INTERNALCOMMANDS = [key.UP, key.DOWN, key.LEFT, key.RIGHT, key.CTRL_F, '\\', key.CTRL_N, key.CTRL_R, key.DELETE, key.CTRL_U, '=', '-', '?']
 
 
-    def defaultPrintFunc(item: str, maxNameWidth: int):
+    def defaultPrintFunc(item: str, maxNameWidth: int, itemColor: Union[str, tuple[int, int, int]]):
         """Default printing function for item names.
 
         Args:
@@ -65,28 +67,47 @@ class ConsoleListInterface:
 
         """
         if len(item) <= maxNameWidth:
-            itemName = item
+            itemName = colored(item, itemColor)
         else:
-            itemName = item[:maxNameWidth - 1] + '-'
+            itemName = colored(item[:maxNameWidth - 1] + '-', itemColor)
 
         return itemName
 
 
     def __init__(self, items: list[str] = [], specialCommands: list[str] = [key.ENTER, key.ESC], helpPage: str = DEFAULTHELP, startPos: int = 0, 
-                 printFunc: Callable[[str, int], int] = defaultPrintFunc, rebindCommand: dict[str, str] = {}, disableHelp: bool = False, dontPrintList: bool = False):
+                 printFunc: Callable[[str, int], int] = defaultPrintFunc, rebindCommand: dict[str, str] = {}, disableHelp: bool = False, dontPrintList: bool = False,
+                 topTextColor: Union[str, tuple[int, int, int]] = 'light_grey', itemColor: Union[str, tuple[int, int, int]] = 'light_grey'):
         """Intializes console interface.
 
         Args:
             items (list[str]): complete list of selectable items.
+            
             specialCommands (list[str]): the commands that will be outputted from the 'interact' method; if empty, method will be stuck in an infite loop.
                                          Additionally, internal commands passed in this list will be ignored by the interface and returned by the 'interact' method.
+
             helpPage (str): user instructions for all application commands.
+
             startPos (int): current position in list, by default the first element.
-            printFunc ((str, int) -> str): custom function for printing the item names (str is the name and int is the cut-off for the name length).
+
+            printFunc ((str, int, str | (int, int, int)) -> str): custom function for printing the item names.
+                                                                  If it has one parameter, it is just the item to be printed.
+                                                                  If it has two parameters, the second one is the maximum name width before cut-off.
+                                                                  If it has three parameters, the third one is the color for the list items.
+
             rebindCommand (str: str): dictionary for rebinding internal commands to other keys (e.g. rebindCommand[key.CTRL_F] = key.CTRL_S will bind searching by string to ctrl+s instead of ctrl+f). 
                                       Binding multiple commands to the same key will lead to only one of them being detected.
+
             disableHelp (bool): disable the "Type '?' for help page." message and help page printing.
+
             dontPrintList (bool): set True to stop the list from being printed on __init__.
+
+            topTextColor (str | (int, int, int)): the color for the text displayed above the list (the default is the standard console light gray).
+                                                  If string, must be compatible with termcolor.colored.
+                                                  If int tuple, it will be the RGB values.
+
+            itemColor (str | (int, int, int)): the color for the list items (the default is the standard console light gray).
+                                               If string, must be compatible with termcolor.colored.
+                                               If int tuple, it will be the RGB values.
 
         Returns:
             ConsoleListInterface object.
@@ -117,6 +138,8 @@ class ConsoleListInterface:
         self._commandBind     = {command: (command if command not in rebindCommand else lowercaseKey(rebindCommand[command])) for command in self._INTERNALCOMMANDS}
         self._actualCommands  = self._commandBind.values() # all the values that internal commands are bound to
         self._disableHelp     = disableHelp
+        self._topTextColor    = topTextColor
+        self._itemColor       = itemColor
 
         self._totalColumns      = roundup(len(self._items) / self._itemsPerColumn)
         self._lastColumnHeight  = len(self._items) % self._itemsPerColumn
@@ -196,7 +219,13 @@ class ConsoleListInterface:
         
             moveCursor(printLine + self._getLinesOfSetText() - 1, (printColumn - 1) * (self._SPACESBEFORE + self._maxNameWidth))
 
-            print(f'    {self._printFunc(item, self._maxNameWidth)}')
+            paramNo = len(signature(self._printFunc).parameters) # calling _printFunc with the appropriate number of parameters
+            if paramNo == 1:
+                print(f'    {self._printFunc(item)}')
+            elif paramNo == 2:
+                print(f'    {self._printFunc(item, self._maxNameWidth)}')
+            elif paramNo == 3:
+                print(f'    {self._printFunc(item, self._maxNameWidth, self._itemColor)}')
             
             printLine += 1
             if self._itemsPerColumn < printLine:

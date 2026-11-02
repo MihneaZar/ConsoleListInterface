@@ -55,7 +55,7 @@ class MenuInterface(ConsoleListInterface):
 
 
     def __init__(self, menuStructure: dict[str, dict], submenuColor: Union[str, tuple[int, int, int]] = 'blue', optionColor: Union[str, tuple[int, int, int]] = 'light_blue', 
-                 supressColorWarning: bool = False, dontPrintMenu: bool = False, escOnAnyMenu: bool = False, columnNo: int = 1):
+                 supressColorWarning: bool = False, dontPrintMenu: bool = False, escOnAnyMenu: bool = False, columnNo: int = 1, truncateNames: bool = False):
         """Intializes console interface.
 
         Args:
@@ -82,6 +82,12 @@ class MenuInterface(ConsoleListInterface):
                             If too high, submenu and option names will be truncated.
                             By default, it is 1, to allow for longest possible names. 
 
+            truncateNames (bool): whether to truncate submenu and option names (default False).
+                                  If True, it will truncate names that are longer than the column width (roughly determined by console width // columnNo).
+                                  If False, it will avoid truncating, but that might cause one of the following issues:
+                                      - names might overflow onto the next console line (and potentially overwrite the next submenu or option);
+                                      - if columnNo is higher than 1, and the columns are too close, names might overwrite eachother. 
+
         Returns: 
             A MenuInterface object.
 
@@ -103,12 +109,12 @@ class MenuInterface(ConsoleListInterface):
         rebindUnused = {command: "" for command in MenuInterface._INTERNALCOMMANDS if command not in MenuInterface._KEEPCOMMANDS}
         
         super(MenuInterface, self).__init__(items=list(self._currentMenu.keys()), specialCommands=self._SPECIALCOMMANDS, helpPage=_HELPPAGEMAIN, rebindCommand=rebindUnused, dontPrintList=True, # the list will be reprinted anyway in setTopText
-                                            printFunc=lambda optionName, maxNameWidth: MenuInterface._menuPrintFunc(optionName, maxNameWidth, self._currentMenu, submenuColor, optionColor))
+                                            printFunc=lambda optionName, maxNameWidth: MenuInterface._menuPrintFunc(optionName, maxNameWidth, self._currentMenu, submenuColor, optionColor, truncateNames))
 
         self.setTopText(colored(next(iter(menuStructure.keys())), self._submenuColor) + '\n', dontPrintList=dontPrintMenu) # Main Menu name
     
 
-    def _menuPrintFunc(optionName: str, maxNameWidth: int, currentMenu: dict[str: Optional[dict]], submenuColor: Union[str, tuple[int, int, int]], optionColor: Union[str, tuple[int, int, int]]):#, ignoreMaxWidth: bool = True):
+    def _menuPrintFunc(optionName: str, maxNameWidth: int, currentMenu: dict[str: Optional[dict]], submenuColor: Union[str, tuple[int, int, int]], optionColor: Union[str, tuple[int, int, int]], truncateNames: bool):
         """Special printing function for differentiating between submenus and options.
 
         Args:
@@ -117,14 +123,14 @@ class MenuInterface(ConsoleListInterface):
             currentMenu (str: dict): the structure of the current menu (since it's a dictionary, Python passes it by reference - sort-of: https://stackoverflow.com/a/15078615/31936209).
             submenuColor (str | (int, int, int)): the color for printing submenu names.
             optionColor (str | (int, int, int)): the color for printing option names. 
-            #ignoreMaxWidth (bool): since the submenu and option names are unlikely to be longer than the console width, the cut-off is ignored by default.   
+            truncateNames (bool): whether to truncate names or not.   
 
         Returns:
             The truncated name.
 
         """
         isMenu = (currentMenu[optionName] != "" and currentMenu[optionName] is not None)
-        if len(optionName) <= maxNameWidth:# or ignoreMaxWidth:
+        if not truncateNames or len(optionName) <= maxNameWidth:
             optionName = optionName
         else:
             optionName = optionName[:maxNameWidth - 1] + '-'

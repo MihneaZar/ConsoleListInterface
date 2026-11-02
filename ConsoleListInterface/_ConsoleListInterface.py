@@ -78,7 +78,7 @@ class ConsoleListInterface:
 
     def __init__(self, items: list[str] = [], specialCommands: list[str] = [key.ENTER, key.ESC], helpPage: str = DEFAULTHELP, startPos: int = 0, 
                  printFunc: Callable[[str, int], int] = defaultPrintFunc, rebindCommand: dict[str, str] = {}, disableHelp: bool = False, dontPrintList: bool = False,
-                 topTextColor: Union[str, tuple[int, int, int]] = 'light_grey', itemColor: Union[str, tuple[int, int, int]] = 'light_grey', helpColor: Union[str, tuple[int, int, int]] = 'light_grey'):
+                 topTextColor: Union[str, tuple[int, int, int]] = 'light_grey', itemColor: Union[str, tuple[int, int, int]] = 'light_grey', helpSearchColor: Union[str, tuple[int, int, int]] = 'light_grey'):
         """Intializes console interface.
 
         Args:
@@ -111,9 +111,9 @@ class ConsoleListInterface:
                                                If string, must be compatible with termcolor.colored.
                                                If int tuple, it will be the RGB values.
                                                
-            helpColor (str | (int, int, int)): the color for the "Type '?' for help page." message (the default is the standard console light gray).
-                                               If string, must be compatible with termcolor.colored.
-                                               If int tuple, it will be the RGB values.
+            helpSearchColor (str | (int, int, int)): the color for the help-page and search messages (the default is the standard console light gray).
+                                                     If string, must be compatible with termcolor.colored.
+                                                     If int tuple, it will be the RGB values.
 
         Returns:
             ConsoleListInterface object.
@@ -146,7 +146,7 @@ class ConsoleListInterface:
         self._disableHelp     = disableHelp
         self._topTextColor    = topTextColor
         self._itemColor       = itemColor
-        self._helpColor       = helpColor
+        self._helpSearchColor       = helpSearchColor
 
         self._totalColumns      = roundup(len(self._items) / self._itemsPerColumn)
         self._lastColumnHeight  = len(self._items) % self._itemsPerColumn
@@ -240,7 +240,7 @@ class ConsoleListInterface:
         moveCursor(self._itemsPerColumn + 2 + self._getLinesOfSetText() - 1, 0)
 
         if not self._disableHelp:
-            print(colored(f"Type '{self._commandBind['?']}' for help page.", self._helpColor), end='', flush=True)
+            print(colored(f"Type '{self._commandBind['?']}' for help page.", self._helpSearchColor), end='', flush=True)
 
     
     def interact(self, reprintList: bool = False) -> tuple[str, int]:
@@ -303,7 +303,7 @@ class ConsoleListInterface:
                     moveCursor(self._separateInteractionPos, 0)
                     cursor.show()
                     # using autocomplete for the ctrl+f search function
-                    self._searchStr = autocomplete(self._items, "String to search by:\n").lower()
+                    self._searchStr = autocomplete(self._items, colored("String to search by:\n", self._helpSearchColor)).lower()
                     cursor.hide()
                     cls()
                     reprint = True
@@ -634,7 +634,7 @@ class ConsoleListInterface:
         setTitle(title)
 
     def configure(self, printFunc: Optional[Callable[[str, int], int]] = None, specialCommands: list[str] = None, rebindCommand: dict[str, str] = None, helpPage: str = None,
-                  topTextColor: Union[str, tuple[int, int, int]] = None, itemColor: Union[str, tuple[int, int, int]] = None, helpColor: Union[str, tuple[int, int, int]] = None):
+                  topTextColor: Union[str, tuple[int, int, int]] = None, itemColor: Union[str, tuple[int, int, int]] = None, helpSearchColor: Union[str, tuple[int, int, int]] = None):
         """Change one or more of the configurable functionalities.
 
         Args:
@@ -655,9 +655,9 @@ class ConsoleListInterface:
                                                If string, must be compatible with termcolor.colored.
                                                If int tuple, it will be the RGB values.
 
-            helpColor (str | (int, int, int)): the color for the "Type '?' for help page." message (the default is the standard console light gray).
-                                               If string, must be compatible with termcolor.colored.
-                                               If int tuple, it will be the RGB values.
+            helpSearchColor (str | (int, int, int)): the color for the help-page and search messages (the default is the standard console light gray).
+                                                     If string, must be compatible with termcolor.colored.
+                                                     If int tuple, it will be the RGB values.
 
         """
 
@@ -680,8 +680,8 @@ class ConsoleListInterface:
         if itemColor:
             self._itemColor = itemColor
 
-        if helpColor:
-            self._helpColor = helpColor
+        if helpSearchColor:
+            self._helpSearchColor = helpSearchColor
 
     def disableHelpPage(self, disableHelp: Optional[bool] = None):
         """Change whether the "Type '?' for help page." message is shown and the help page is printed.

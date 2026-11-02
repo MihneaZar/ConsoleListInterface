@@ -6,7 +6,7 @@ from readchar import key
 import string
 
 
-_HELPPAGEMAIN = """Menu controls:
+_HELPPAGEMAIN = f"""{colored('Menu controls', 'light_blue')}
 
     - arrow keys -> moving between options in the current menu.
     - enter      -> if the selected item is a submenu, enter said submenu.
@@ -17,7 +17,7 @@ _HELPPAGEMAIN = """Menu controls:
 """
 
 # help page for submenu when escOnAnyMenu is False
-_HELPPAGESUB = """Menu controls:
+_HELPPAGESUB = f"""{colored('Menu controls', 'light_blue')}
 
     - arrow keys -> moving between options in the current menu.
     - enter      -> if the selected item is a submenu, enter said submenu.

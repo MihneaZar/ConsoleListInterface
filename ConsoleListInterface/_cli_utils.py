@@ -6,7 +6,7 @@ import os
 import re
 
 def autocomplete(autocompleteList: list[str] = [], prompt: str = "", inputColor: Union[str, tuple[int, int, int]] = "light_grey", 
-                 autocompleteColor: Union[str, tuple[int, int, int]] = "white", exitOnEsc: bool = False):
+                 autocompleteColor: Union[str, tuple[int, int, int]] = "white", supressColorWarning: bool = False, exitOnEsc: bool = False):
     """Function for console input with autocomplete feature.
     
     Args:
@@ -22,12 +22,23 @@ def autocomplete(autocompleteList: list[str] = [], prompt: str = "", inputColor:
                                                   If string, must be compatible with termcolor.colored.
                                                   If int tuple, it will be the RGB values.
 
+        supressColorWarning (bool): set this to True if the 'grey' color option prints visibly in the terminal, 
+                                    in order to supress the warning for it.
+
         exitOnEsc (bool): allows exiting this function by pressing ESC (function returns None).
     
     Returns:
         The entered input, or None if Esc was pressed and exitOnEsc is True.
     
     """
+    if not supressColorWarning and "grey" in [inputColor, autocompleteColor]:
+        cls()
+        moveCursor(0, 0)
+        print("autocomplete warning: termcolor 'grey' may not be visible in the terminal.")
+        print("Consider changing it to 'light_grey' - the standard color of text in terminal.")
+        print("Otherwise, use 'supressColorWarning=True' to supress this warning.\n")
+        print("Press enter to continue.\n")
+        waitForEnter()
 
     # removing non-string autocomplete options, just in case
     autocompleteList = [option for option in autocompleteList if type(option) is str]

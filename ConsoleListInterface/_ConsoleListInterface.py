@@ -78,7 +78,8 @@ class ConsoleListInterface:
 
     def __init__(self, items: list[str] = [], specialCommands: list[str] = [key.ENTER, key.ESC], helpPage: str = DEFAULTHELP, startPos: int = 0, 
                  printFunc: Callable[[str, int], int] = defaultPrintFunc, rebindCommand: dict[str, str] = {}, disableHelp: bool = False, dontPrintList: bool = False,
-                 topTextColor: Union[str, tuple[int, int, int]] = 'light_grey', itemColor: Union[str, tuple[int, int, int]] = 'light_grey', helpSearchColor: Union[str, tuple[int, int, int]] = 'light_grey'):
+                 topTextColor: Union[str, tuple[int, int, int]] = 'light_grey', itemColor: Union[str, tuple[int, int, int]] = 'light_grey', 
+                 helpSearchColor: Union[str, tuple[int, int, int]] = 'light_grey', supressColorWarning: bool = False):
         """Intializes console interface.
 
         Args:
@@ -115,10 +116,22 @@ class ConsoleListInterface:
                                                      If string, must be compatible with termcolor.colored.
                                                      If int tuple, it will be the RGB values.
 
+            supressColorWarning (bool): set this to True if the 'grey' color option prints visibly in the terminal, 
+                                        in order to supress the warning for it.
+
         Returns:
             ConsoleListInterface object.
 
         """
+        if not supressColorWarning and "grey" in [topTextColor, itemColor, helpSearchColor]:
+            cls()
+            moveCursor(0, 0)
+            print("autocomplete warning: termcolor 'grey' may not be visible in the terminal.")
+            print("Consider changing it to 'light_grey' - the standard color of text in terminal.")
+            print("Otherwise, use 'supressColorWarning=True' to supress this warning.\n")
+            print("Press enter to continue.\n")
+            waitForEnter()
+
         if items == None:
             items = []
 
@@ -633,8 +646,9 @@ class ConsoleListInterface:
         """
         setTitle(title)
 
-    def configure(self, printFunc: Optional[Callable[[str, int], int]] = None, specialCommands: list[str] = None, rebindCommand: dict[str, str] = None, helpPage: str = None,
-                  topTextColor: Union[str, tuple[int, int, int]] = None, itemColor: Union[str, tuple[int, int, int]] = None, helpSearchColor: Union[str, tuple[int, int, int]] = None):
+    def configure(self, printFunc: Optional[Callable[[str, int], int]] = None, specialCommands: list[str] = None, rebindCommand: dict[str, str] = None, 
+                  helpPage: str = None, topTextColor: Union[str, tuple[int, int, int]] = None, itemColor: Union[str, tuple[int, int, int]] = None, 
+                  helpSearchColor: Union[str, tuple[int, int, int]] = None, supressColorWarning: bool = False):
         """Change one or more of the configurable functionalities.
 
         Args:
@@ -659,7 +673,18 @@ class ConsoleListInterface:
                                                      If string, must be compatible with termcolor.colored.
                                                      If int tuple, it will be the RGB values.
 
+            supressColorWarning (bool): set this to True if the 'grey' color option prints visibly in the terminal, 
+                                        in order to supress the warning for it.
+
         """
+        if not supressColorWarning and "grey" in [topTextColor, itemColor, helpSearchColor]:
+            cls()
+            moveCursor(0, 0)
+            print("autocomplete warning: termcolor 'grey' may not be visible in the terminal.")
+            print("Consider changing it to 'light_grey' - the standard color of text in terminal.")
+            print("Otherwise, use 'supressColorWarning=True' to supress this warning.\n")
+            print("Press enter to continue.\n")
+            waitForEnter()
 
         if specialCommands: 
             self._specialCommands = specialCommands

@@ -77,7 +77,7 @@ class MenuInterface(ConsoleListInterface):
                                                If int tuple, it will be the RGB values.
 
             supressColorWarning (bool): set this to True if the 'grey' color option prints visibly in the terminal, 
-                                        in order to ignore the warning for it.
+                                        in order to supress the warning for it.
 
             dontPrintMenu (bool): set to True to stop the Main Menu from being printed on __init__.
 
@@ -100,7 +100,10 @@ class MenuInterface(ConsoleListInterface):
         if not supressColorWarning and "grey" in [submenuColor, optionColor]:
             cls()
             moveCursor(0, 0)
-            print("MenuInterface.__init__ warning: termcolor 'grey' may not be visible in the terminal.\nConsider changing it to 'light_grey' - the standard color of text in terminal.\n\nPress enter to continue.\n")
+            print("autocomplete warning: termcolor 'grey' may not be visible in the terminal.")
+            print("Consider changing it to 'light_grey' - the standard color of text in terminal.")
+            print("Otherwise, use 'supressColorWarning=True' to supress this warning.\n")
+            print("Press enter to continue.\n")
             waitForEnter()
 
         self._menuStructure = menuStructure
@@ -114,7 +117,8 @@ class MenuInterface(ConsoleListInterface):
         rebindUnused = {command: "" for command in MenuInterface._INTERNALCOMMANDS if command not in MenuInterface._KEEPCOMMANDS}
         
         super(MenuInterface, self).__init__(items=list(self._currentMenu.keys()), specialCommands=self._SPECIALCOMMANDS, helpPage=_HELPPAGEMAIN, rebindCommand=rebindUnused, dontPrintList=True, # the list will be reprinted anyway in setTopText
-                                            printFunc=lambda optionName, maxNameWidth: MenuInterface._menuPrintFunc(optionName, maxNameWidth, self._currentMenu, submenuColor, optionColor, truncateNames), helpSearchColor=helpColor)
+                                            printFunc=lambda optionName, maxNameWidth: MenuInterface._menuPrintFunc(optionName, maxNameWidth, self._currentMenu, submenuColor, optionColor, truncateNames), 
+                                            helpSearchColor=helpColor, supressColorWarning=supressColorWarning)
 
         self.setTopText(colored(next(iter(menuStructure.keys())), self._submenuColor) + '\n', dontPrintList=dontPrintMenu) # Main Menu name
     
@@ -403,15 +407,16 @@ class MenuInterface(ConsoleListInterface):
                                               If the value is given as a list of strings, will print each string on a separate line. If string, it will simply print the string.
                                               The function will automatically append ':' to category title when in the help page of the category, if it doesn't already have punctuation.
             
-            submenuColor (str | (int, int, int)): the color for printing the help menu title, equivalent to submenuColor from the init of the class.
-                                                  If string, must be compatible with termcolor.colored.
-                                                  If int tuple, it will be the RGB values.
-            submenuColor (str | (int, int, int)): the color for printing the help menu categories, equivalent to optionColor from the init of the class.
-                                                  If string, must be compatible with termcolor.colored.
-                                                  If int tuple, it will be the RGB values.
+            titleColor (str | (int, int, int)): the color for printing the help menu title, equivalent to submenuColor from the init of the class.
+                                                If string, must be compatible with termcolor.colored.
+                                                If int tuple, it will be the RGB values.
+
+            helpOptionColor (str | (int, int, int)): the color for printing the help menu categories, equivalent to optionColor from the init of the class.
+                                                     If string, must be compatible with termcolor.colored.
+                                                     If int tuple, it will be the RGB values.
 
             supressColorWarning (bool): set this to True if the 'grey' color option prints visibly in the terminal, 
-                                        in order to ignore the warning for it.                  
+                                        in order to supress the warning for it.                  
 
             title (str): the title of the help page, by default simply "Help page".
             

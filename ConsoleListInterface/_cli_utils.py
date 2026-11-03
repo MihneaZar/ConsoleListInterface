@@ -1,4 +1,4 @@
-from readchar import readchar, key
+from readchar import readkey, key
 from termcolor import colored
 from typing import Union
 import sys
@@ -37,7 +37,11 @@ def autocomplete(autocompleteList: list[str] = [], prompt: str = "", inputColor:
     lastAutocomplete = ""
     string = ""
     while True: 
-        char = readchar()
+        char = readkey()
+
+        # ignoring multiple-character keys like the arrow keys
+        if 1 < len(char):
+            continue
 
         # confirmed input
         if char == key.ENTER:
@@ -62,8 +66,13 @@ def autocomplete(autocompleteList: list[str] = [], prompt: str = "", inputColor:
 
         # tab (for autocomplete)
         if char == key.TAB:
-            string += lastAutocomplete
-            print(colored(lastAutocomplete, inputColor), end='', flush=True)
+            if string != "":
+                string += lastAutocomplete
+                print(colored(lastAutocomplete, inputColor), end='', flush=True)
+            elif len(autocompleteList) != 0:
+                string = autocompleteList[0]
+                print(colored(string, inputColor), end='', flush=True)
+
             printChar = False
 
         # backspace

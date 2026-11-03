@@ -35,13 +35,34 @@ def autocomplete(autocompleteList: list[str] = [], prompt: str = "", inputColor:
     print(prompt, end='', flush=True)
     
     lastAutocomplete = ""
+    autocomplete_pos = -1 # using arrow keys up and down to cycle through autocomplete list
     string = ""
     while True: 
         char = readkey()
 
-        # ignoring multiple-character keys like the arrow keys
+        # multiple-character keys like the arrow keys
         if 1 < len(char):
-            continue
+            # cycling through the autocomplete list with up/down
+            if char in [key.UP, key.DOWN]:
+                if char == key.UP:
+                    autocomplete_pos += 1
+                    if len(autocompleteList) - 1 < autocomplete_pos:
+                        autocomplete_pos = 0
+                if char == key.DOWN:
+                    autocomplete_pos -= 1
+                    if autocomplete_pos < 0:
+                        autocomplete_pos = len(autocompleteList) - 1
+
+                if autocompleteList:
+                    # removing last autocomplete
+                    print(' ' * len(lastAutocomplete) + '\b' * len(lastAutocomplete), end = '', flush=True)
+                    # removing previous input for string and moving cursor to beginning position
+                    print('\b' * len(string) + ' ' * len(string) + '\b' * len(string), end = '', flush=True)
+                    string = autocompleteList[autocomplete_pos]
+                    print(string, end = '', flush=True)
+
+                continue
+                
 
         # confirmed input
         if char == key.ENTER:

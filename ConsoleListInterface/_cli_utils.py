@@ -35,43 +35,61 @@ def autocomplete(autocompleteList: list[str] = [], prompt: str = "", inputColor:
     print(prompt, end='', flush=True)
     
     lastAutocomplete = ""
-    autocomplete_pos = -1 # using arrow keys up and down to cycle through autocomplete list
+    autocompletePos = -1 # using arrow keys up and down to cycle through autocomplete list
+    stringPos = 0 # position for moving left/right through string 
     string = ""
     while True: 
         char = readkey()
+
+        # not printing special keys (backspace, tab, arrow keys)
+        printChar = True
 
         # multiple-character keys like the arrow keys
         if 1 < len(char):
             # cycling through the autocomplete list with up/down
             if char in [key.UP, key.DOWN]:
                 if char == key.UP:
-                    autocomplete_pos += 1
-                    if len(autocompleteList) - 1 < autocomplete_pos:
-                        autocomplete_pos = 0
+                    autocompletePos += 1
+                    if len(autocompleteList) - 1 < autocompletePos:
+                        autocompletePos = 0
                 if char == key.DOWN:
-                    autocomplete_pos -= 1
-                    if autocomplete_pos < 0:
-                        autocomplete_pos = len(autocompleteList) - 1
+                    autocompletePos -= 1
+                    if autocompletePos < 0:
+                        autocompletePos = len(autocompleteList) - 1
 
                 if autocompleteList:
                     # removing last autocomplete
-                    print(' ' * len(lastAutocomplete) + '\b' * len(lastAutocomplete), end = '', flush=True)
+                    print(string[stringPos:] + ' ' * len(lastAutocomplete) + '\b' * len(lastAutocomplete), end='', flush=True)
                     # removing previous input for string and moving cursor to beginning position
-                    print('\b' * len(string) + ' ' * len(string) + '\b' * len(string), end = '', flush=True)
-                    string = autocompleteList[autocomplete_pos]
-                    print(string, end = '', flush=True)
+                    print('\b' * len(string) + ' ' * len(string) + '\b' * len(string), end='', flush=True)
+                    string = autocompleteList[autocompletePos]
+                    print(string, end='', flush=True)
+
+                    stringPos = len(string)
+
+                # printChar = False rather than continue so that the next autocomplete option can be shown
+                # (think 'test' and 'testing')
+                printChar = False
+
+            # moving left/right through string
+            if char in [key.LEFT, key.RIGHT]:
+                if char == key.LEFT:
+                    if 1 <= stringPos:
+                        print('\b', end='', flush=True)
+                        stringPos -= 1
+
+                if char == key.RIGHT:
+                    if stringPos <= len(string) - 1:
+                        print(string[stringPos], end='', flush=True)
+                        stringPos += 1
 
                 continue
-                
 
-        # confirmed input
+
+        # confirm input
         if char == key.ENTER:
             print()
             return string
-
-        # tab and backspace are treated separately from the other characters
-        # (esc is ignored if exitOnEsc is False)
-        printChar = True
 
         # exiting by pressing Esc
         if char == key.ESC: 
@@ -80,10 +98,10 @@ def autocomplete(autocompleteList: list[str] = [], prompt: str = "", inputColor:
                 return None
             # otherwise ignore the character
             else: 
-                printChar = False
+                continue
 
         # removing previous autocomplete
-        print(' ' * len(lastAutocomplete) + '\b' * len(lastAutocomplete), end = '', flush=True)
+        print(string[stringPos:] + ' ' * len(lastAutocomplete) + '\b' * len(lastAutocomplete), end='', flush=True)
 
         # tab (for autocomplete)
         if char == key.TAB:
@@ -94,20 +112,25 @@ def autocomplete(autocompleteList: list[str] = [], prompt: str = "", inputColor:
                 string = autocompleteList[0]
                 print(colored(string, inputColor), end='', flush=True)
 
+            stringPos = len(string)
             printChar = False
 
         # backspace
         if char == key.BACKSPACE:
-            if string != "": # only allow backspace when string is not empty!!
-                string = string[:-1]
-                print("\b \b", end='', flush=True)
-                    
+            if 1 <= stringPos: # only allow backspace when string is not empty!! (and when stringPos is not in first position)
+                string = string[:stringPos - 1] + string[stringPos:]
+                # this is some of the most convoluted math ive ever had to fucking do
+                # dont  ask me why its + 2 PLEASUH
+                print('\b' * (len(string) - stringPos + 2) + string[stringPos - 1:] + ' ' + '\b' * (len(string) - stringPos + 2), end='', flush=True)
+                stringPos -= 1
+            
             printChar = False
 
         # normal char to be printed
         if printChar:
-            print(colored(char, inputColor), end='', flush=True)
-            string += char
+            string = string[:stringPos] + char + string[stringPos:]
+            print('\b' * (len(string) - stringPos - 1) + colored(string[stringPos:] + '\b' * (len(string) - stringPos - 1), inputColor), end='', flush=True)
+            stringPos += 1
 
         # update autocomplete and print it
         if string:
@@ -177,5 +200,5 @@ def stripANSIfromText(text: str):
 
 def waitForEnter():
     """Waits for the enter key to be pressed (for "Press enter to continue" messages)."""
-    while not readchar() == key.ENTER:
+    while not readkey() == key.ENTER:
         pass

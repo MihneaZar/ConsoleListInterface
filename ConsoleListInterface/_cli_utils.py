@@ -44,8 +44,22 @@ def autocomplete(autocompleteList: list[str] = [], prompt: str = "", inputColor:
         # not printing special keys (backspace, tab, arrow keys)
         printChar = True
 
-        # multiple-character keys like the arrow keys
+        # 1 < len(char) for multiple-character keys like the arrow keys 
         if 1 < len(char):
+            # moving left/right through string
+            if char in [key.LEFT, key.RIGHT]:
+                if char == key.LEFT:
+                    if 1 <= stringPos:
+                        print('\b', end='', flush=True)
+                        stringPos -= 1
+            
+                if char == key.RIGHT:
+                    if stringPos <= len(string) - 1:
+                        print(string[stringPos], end='', flush=True)
+                        stringPos += 1
+            
+                continue
+
             # cycling through the autocomplete list with up/down
             if char in [key.UP, key.DOWN]:
                 if char == key.UP:
@@ -71,18 +85,8 @@ def autocomplete(autocompleteList: list[str] = [], prompt: str = "", inputColor:
                 # (think 'test' and 'testing')
                 printChar = False
 
-            # moving left/right through string
-            if char in [key.LEFT, key.RIGHT]:
-                if char == key.LEFT:
-                    if 1 <= stringPos:
-                        print('\b', end='', flush=True)
-                        stringPos -= 1
-
-                if char == key.RIGHT:
-                    if stringPos <= len(string) - 1:
-                        print(string[stringPos], end='', flush=True)
-                        stringPos += 1
-
+            # ignoring all other multiple-character keys
+            else:
                 continue
 
 
@@ -127,7 +131,8 @@ def autocomplete(autocompleteList: list[str] = [], prompt: str = "", inputColor:
             printChar = False
 
         # normal char to be printed
-        if printChar:
+        # ctrl+j is '\n' and that fucks things up
+        if printChar and char != '\n':
             string = string[:stringPos] + char + string[stringPos:]
             print('\b' * (len(string) - stringPos - 1) + colored(string[stringPos:] + '\b' * (len(string) - stringPos - 1), inputColor), end='', flush=True)
             stringPos += 1

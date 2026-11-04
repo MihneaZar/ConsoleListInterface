@@ -46,8 +46,8 @@ def autocomplete(autocompleteList: list[str] = [], prompt: str = "", inputColor:
     print(prompt, end='', flush=True)
     
     lastAutocomplete = ""
-    autocompletePos = -1 # using arrow keys up and down to cycle through autocomplete list
-    stringPos = 0 # position for moving left/right through string 
+    autocompletePos = -1 # using arrow keys up and down to cycle through all autocomplete option which include string
+    stringPos = 0 # position for moving left and right through string 
     string = ""
     while True: 
         char = readkey()
@@ -73,21 +73,24 @@ def autocomplete(autocompleteList: list[str] = [], prompt: str = "", inputColor:
 
             # cycling through the autocomplete list with up/down
             if char in [key.UP, key.DOWN]:
+                if autocompletePos == -1: # new up/down cycle
+                    upDownMatches = [option for option in autocompleteList if string in option]
+
                 if char == key.UP:
                     autocompletePos += 1
-                    if len(autocompleteList) - 1 < autocompletePos:
+                    if len(upDownMatches) - 1 < autocompletePos:
                         autocompletePos = 0
                 if char == key.DOWN:
                     autocompletePos -= 1
                     if autocompletePos < 0:
-                        autocompletePos = len(autocompleteList) - 1
+                        autocompletePos = len(upDownMatches) - 1
 
-                if autocompleteList:
+                if upDownMatches:
                     # removing last autocomplete
                     print(string[stringPos:] + ' ' * len(lastAutocomplete) + '\b' * len(lastAutocomplete), end='', flush=True)
                     # removing previous input for string and moving cursor to beginning position
                     print('\b' * len(string) + ' ' * len(string) + '\b' * len(string), end='', flush=True)
-                    string = autocompleteList[autocompletePos]
+                    string = upDownMatches[autocompletePos]
                     print(string, end='', flush=True)
 
                     stringPos = len(string)
@@ -99,6 +102,11 @@ def autocomplete(autocompleteList: list[str] = [], prompt: str = "", inputColor:
             # ignoring all other multiple-character keys
             else:
                 continue
+
+        else:
+            # reseting up/down cycle if arrow keys are not pressed
+            # even if it is left/right being pressed, those are the only ones which don't change the actual string
+            autocompletePos = -1 
 
 
         # confirm input

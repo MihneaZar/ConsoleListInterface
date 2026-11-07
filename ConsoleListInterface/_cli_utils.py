@@ -103,7 +103,7 @@ def autocomplete(autocompleteList: list[str] = [], prompt: str = "", inputColor:
             else:
                 continue
 
-        else:
+        elif char != key.ESC: # ignoring ESC when exitOnEsc is False
             # reseting up/down cycle if arrow keys are not pressed
             # even if it is left/right being pressed, those are the only ones which don't change the actual string
             autocompletePos = -1 

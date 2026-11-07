@@ -301,64 +301,71 @@ class MenuInterface(ConsoleListInterface):
             self.updateList(list(self._currentMenu.keys()))
 
     
-    def selectOption(selectedOption: str, newSelectedOption: str, options: list[str], padding: bool = True, selectText: str = "(selected)"):
+    def selectOption(selectedOption: str, newSelectedOption: str, options: list[str], selectedText: str = "(selected)", padding: bool = True, maxOptionLength: Optional[int] = None):
         """Creates the changes dictionary for when a single selectable option is chosen.
 
         Args:
             selectedOption (str): the currently selected option (can be None).
             newSelectedOption (str): the newly selected option (also can be None).
             options (list[str]): the complete list of options.
-            padding (bool): whether to pad the name of the selected option, so that the selectText is always at the same width.
-                           Important: if padding is left True, the original menu structure must also contain that padding.
             selectedText (str): the text to be displayed to show an option is selected, by default '(selected)'.
+            padding (bool): whether to pad the name of the selected option, so that the selectedText is always aligned.
+                            Important: if padding is left True, the original menu structure must also contain that padding.
+            maxOptionLength (int): if padding is True, overwrite the length to which the names are padded.
+                                   Can be used to make sure the selectedText aligns when there are multiple, separate choices in the same submenu.
 
         Returns:
             (str: str): the changes dictionary. 
 
         """
-        maxOptionLength = max([len(option) for option in options])
+        if not maxOptionLength and padding:
+            maxOptionLength = max([len(option) for option in options])
+        
         changes = {}
         for option in options:
             key = option
             if option == selectedOption:
                 if padding:
                     key += " " * (maxOptionLength - len(option) + 1)
-                key += selectText
+                key += selectedText
                 
             value = option
             if option == newSelectedOption:
                 if padding: 
                     value += " " * (maxOptionLength - len(option) + 1)
-                value += selectText
+                value += selectedText
 
             changes[key] = value
 
         return changes
     
-    def selectMultipleOptions(selectedOptions: list[str], newSelectedOption: str, options: list[str], selectText: str = "(selected)", padding: bool = True):    
+    def selectMultipleOptions(selectedOptions: list[str], newSelectedOption: str, options: list[str], selectedText: str = "(selected)", padding: bool = True, maxOptionLength: Optional[int] = None):    
         """Creates the changes dictionary for multiple selectable options.
 
         Args:
             selectedOptions (list[str]): the currently selected options.
             newSelectedOption (str): the newly selected option (can be None).
             options (list[str]): the complete list of options.
-            padding (bool): whether to pad the name of the selected option, so that the selectText is always at the same width.
-                           Important: if padding is left True, the original menu structure must also contain that padding.
             selectedText (str): the text to be displayed to show an option is selected, by default '(selected)'.
+            padding (bool): whether to pad the name of the selected options, so that the selectedText is always aligned.
+                            Important: if padding is left True, the original menu structure must also contain that padding.
+            maxOptionLength (int): if padding is True, overwrite the length to which the names are padded.
+                                   Can be used to make sure the selectedText aligns when there are multiple, separate choices in the same submenu.
 
         Returns:
             (str: str): the changes dictionary. 
 
         """
-        maxOptionLength = max([len(option) for option in options])
-        changes = {}
+        if not maxOptionLength and padding:
+            maxOptionLength = max([len(option) for option in options])
         
+        changes = {}
         for option in options:
             key = option
             if option in selectedOptions:
                 if padding:
                     key += " " * (maxOptionLength - len(option) + 1)
-                key += selectText
+                key += selectedText
                 
             value = option
             if option == newSelectedOption:
@@ -366,17 +373,17 @@ class MenuInterface(ConsoleListInterface):
                 if option not in selectedOptions:
                     if padding: 
                         value += " " * (maxOptionLength - len(option) + 1)
-                    value += selectText
+                    value += selectedText
                 
-                # by default, if the newSelectedOption has already been selected, the key will have selectText
-                # and it's unselected by simply having its value be itself without the selectText
+                # by default, if the newSelectedOption has already been selected, the key will have selectedText
+                # and it's unselected by simply having its value be itself without the selectedText
 
             else:
-                # adding selectText for unchanged selected options
+                # adding selectedText for unchanged selected options
                 if option in selectedOptions:
                     if padding: 
                         value += " " * (maxOptionLength - len(option) + 1)
-                    value += selectText
+                    value += selectedText
 
             changes[key] = value
 

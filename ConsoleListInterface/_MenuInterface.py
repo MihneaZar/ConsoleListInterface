@@ -100,7 +100,7 @@ class MenuInterface(ConsoleListInterface):
         if not supressColorWarning and "grey" in [submenuColor, optionColor]:
             cls()
             moveCursor(0, 0)
-            print("autocomplete warning: termcolor 'grey' may not be visible in the terminal.")
+            print("MenuInterface.__init__ warning: termcolor 'grey' may not be visible in the terminal.")
             print("Consider changing it to 'light_grey' - the standard color of text in terminal.")
             print("Otherwise, use 'supressColorWarning=True' to supress this warning.\n")
             print("Press enter to continue.\n")

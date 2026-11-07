@@ -126,7 +126,7 @@ class ConsoleListInterface:
         if not supressColorWarning and "grey" in [topTextColor, itemColor, helpSearchColor]:
             cls()
             moveCursor(0, 0)
-            print("autocomplete warning: termcolor 'grey' may not be visible in the terminal.")
+            print("ConsoleListInterface.__init__ warning: termcolor 'grey' may not be visible in the terminal.")
             print("Consider changing it to 'light_grey' - the standard color of text in terminal.")
             print("Otherwise, use 'supressColorWarning=True' to supress this warning.\n")
             print("Press enter to continue.\n")
@@ -316,7 +316,8 @@ class ConsoleListInterface:
                     moveCursor(self._separateInteractionPos, 0)
                     cursor.show()
                     # using autocomplete for the ctrl+f search function
-                    self._searchStr = autocomplete(self._items, colored("String to search by:\n", self._helpSearchColor)).lower()
+                    searchStr = autocomplete(self._items, colored("String to search by:\n", self._helpSearchColor), exitOnEsc=True)
+                    self._searchStr = searchStr.lower() if searchStr else "" # since autocomplete can return None when esc is pressed
                     cursor.hide()
                     cls()
                     reprint = True
@@ -680,7 +681,7 @@ class ConsoleListInterface:
         if not supressColorWarning and "grey" in [topTextColor, itemColor, helpSearchColor]:
             cls()
             moveCursor(0, 0)
-            print("autocomplete warning: termcolor 'grey' may not be visible in the terminal.")
+            print("ConsoleListInterface.configure warning: termcolor 'grey' may not be visible in the terminal.")
             print("Consider changing it to 'light_grey' - the standard color of text in terminal.")
             print("Otherwise, use 'supressColorWarning=True' to supress this warning.\n")
             print("Press enter to continue.\n")

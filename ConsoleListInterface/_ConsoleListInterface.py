@@ -179,6 +179,15 @@ class ConsoleListInterface:
             self.printList()
 
 
+    def _getPos(self):
+        """Calculates the absolute position in the list based on the current line and column.
+        
+        Returns:
+            int: position in the list of items.
+
+        """
+        return (self._column - 1) * self._itemsPerColumn + self._line - 1
+
     def _getLinesOfSetText(self):
         """Calculates the number of lines of the text set at top. 
         
@@ -203,7 +212,7 @@ class ConsoleListInterface:
 
         # console size has been changed
         if (self._consoleWidth != os.get_terminal_size()[0]) or (self._itemsPerColumn != os.get_terminal_size()[1] - 2):
-            currPos = (self._column - 1) * self._itemsPerColumn + self._line - 1
+            currPos = self._getPos()
 
             self._consoleWidth   = os.get_terminal_size()[0]
             self._itemsPerColumn = max(os.get_terminal_size()[1] - 2 - self._getLinesOfSetText() + 1, 1) # help page message, then startPrintLine
@@ -275,9 +284,9 @@ class ConsoleListInterface:
         while (True):
             moveCursor(self._line + self._getLinesOfSetText() - 1, (self._column - self._leftmostColumn) * (self._SPACESBEFORE + self._maxNameWidth))
             print(" -> ")
-            # print(f'{self._column} {self._line}')                             # debugging, current column and line
-            # print(f'{self._leftmostColumn} {self._column}')                   # debugging, leftmost column and current column
-            # print((self._column - 1) * self._itemsPerColumn + self._line - 1) # debugging, current position in list
+            # print(f'{self._column} {self._line}')           # debugging, current column and line
+            # print(f'{self._leftmostColumn} {self._column}') # debugging, leftmost column and current column
+            # print(self._getPos())                           # debugging, current position in list
             moveCursor(self._line + self._getLinesOfSetText() - 1, (self._column - self._leftmostColumn) * (self._SPACESBEFORE + self._maxNameWidth))
 
             try:
@@ -290,13 +299,13 @@ class ConsoleListInterface:
             
             # special command was issued
             if command in self._specialCommands:
-                return command, (self._column - 1) * self._itemsPerColumn + self._line - 1
+                return command, self._getPos()
 
 
             # searching by first character in item names
             if command not in self._actualCommands:
                 first_letter = command.lower()
-                current_position = (self._column - 1) * self._itemsPerColumn + self._line - 1
+                current_position = self._getPos()
                 new_position = next((i for i in range(len(self._items)) if self._items[i][0].lower() == first_letter and i > current_position), 
                                 next((i for i in range(len(self._items)) if self._items[i][0].lower() == first_letter), current_position))
 
@@ -323,7 +332,7 @@ class ConsoleListInterface:
                     reprint = True
 
                 if self._searchStr and not self._searchStr.isspace():
-                    current_position = (self._column - 1) * self._itemsPerColumn + self._line - 1
+                    current_position = self._getPos()
                     new_position = next((i for i in range(len(self._items)) if self._searchStr in self._items[i].lower() and i > current_position), 
                                     next((i for i in range(len(self._items)) if self._searchStr in self._items[i].lower()), current_position))
 
@@ -411,14 +420,14 @@ class ConsoleListInterface:
                 self.updatePos(len(self._items) - 1)
 
                 # returns command and the position of the new item
-                return command, (self._column - 1) * self._itemsPerColumn + self._line - 1
+                return command, self._getPos()
 
             # renaming selected item
             if command == self._commandBind[key.CTRL_R]:
                 if not self._items:
                     continue
 
-                pos = (self._column - 1) * self._itemsPerColumn + self._line - 1
+                pos = self._getPos()
                 newName = self.separateInteraction(function=lambda: input(f"Rename '{self._items[pos]}' to (or leave empty to cancel):\n"), showCursor=True)
                 
                 if newName and not newName.isspace():
@@ -433,7 +442,7 @@ class ConsoleListInterface:
                 if not self._items:
                     continue
 
-                pos = (self._column - 1) * self._itemsPerColumn + self._line - 1
+                pos = self._getPos()
                 delete = self.separateInteraction(message=f"Type 'y' to remove '{self._items[pos]}'.", function=readkey)
                 
                 if delete == 'y':
@@ -620,7 +629,7 @@ class ConsoleListInterface:
         text += '\n'
 
         prevLines = self._getLinesOfSetText()
-        pos = (self._column - 1) * self._itemsPerColumn + self._line - 1
+        pos = self._getPos()
 
         self._topText = text
         self._itemsPerColumn = max(os.get_terminal_size()[1] - 2 - self._getLinesOfSetText() + 1, 1) # help page message, then startPrintLine

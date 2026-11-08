@@ -620,6 +620,7 @@ class ConsoleListInterface:
         text += '\n'
 
         prevLines = self._getLinesOfSetText()
+        pos = (self._column - 1) * self._itemsPerColumn + self._line - 1
 
         self._topText = text
         self._itemsPerColumn = max(os.get_terminal_size()[1] - 2 - self._getLinesOfSetText() + 1, 1) # help page message, then startPrintLine
@@ -634,6 +635,10 @@ class ConsoleListInterface:
             moveCursor(0, 0)
             print(colored(text, self._topTextColor))
             return
+
+        # if the number of top text lines has changed, the relative _line and _column positions might have changed as well
+        # therefore, _line and _column values are updated based on the absolute position in the list
+        self.updatePos(pos)
         
         if not dontPrintList:
             self.printList()

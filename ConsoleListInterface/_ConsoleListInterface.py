@@ -50,7 +50,7 @@ class ConsoleListInterface:
 
     # the commands recognized by default by the interface
     # the interface will ignore them if they are passed to the specialCommands list
-    # and they can be rebound to other keys through the rebindCommand dictionary
+    # and they can be rebound to other keys through the rebindCommands dictionary
     _INTERNALCOMMANDS = [key.UP, key.DOWN, key.LEFT, key.RIGHT, key.CTRL_F, '\\', key.CTRL_N, key.CTRL_R, key.DELETE, key.CTRL_U, '=', '-', '?']
 
 
@@ -76,10 +76,10 @@ class ConsoleListInterface:
         return itemName
 
 
-    def __init__(self, items: list[str] = [], specialCommands: list[str] = [key.ENTER, key.ESC], helpPage: str = DEFAULTHELP, startPos: int = 0, 
-                 printFunc: Callable[[str, int], int] = defaultPrintFunc, rebindCommand: dict[str, str] = {}, disableHelp: bool = False, dontPrintList: bool = False,
+    def __init__(self, items: list[str] = [], specialCommands: list[str] = [key.ENTER, key.ESC], rebindCommands: dict[str, str] = {}, startPos: int = 0, 
+                 shownColumns: int = 3, printFunc: Callable[[str, int], int] = defaultPrintFunc, helpPage: str = DEFAULTHELP, disableHelp: bool = False, 
                  topTextColor: Union[str, tuple[int, int, int]] = 'light_grey', itemColor: Union[str, tuple[int, int, int]] = 'light_grey', 
-                 helpSearchColor: Union[str, tuple[int, int, int]] = 'light_grey', supressColorWarning: bool = False):
+                 helpSearchColor: Union[str, tuple[int, int, int]] = 'light_grey', dontPrintList: bool = False, supressColorWarning: bool = False):
         """Intializes console interface.
 
         Args:
@@ -88,21 +88,21 @@ class ConsoleListInterface:
             specialCommands (list[str]): the commands that will be outputted from the 'interact' method; if empty, method will be stuck in an infite loop.
                                          Additionally, internal commands passed in this list will be ignored by the interface and returned by the 'interact' method.
 
-            helpPage (str): user instructions for all application commands.
+            rebindCommands (str: str): dictionary for rebinding internal commands to other keys (e.g. rebindCommands[key.CTRL_F] = key.CTRL_S will bind searching by string to ctrl+s instead of ctrl+f). 
+                                      Binding multiple commands to the same key will lead to only one of them being detected.
 
             startPos (int): current position in list, by default the first element.
+
+            shownColumns (int): number of columns to be shown at a time in the console (by default 3).
 
             printFunc ((str, int, str | (int, int, int)) -> str): custom function for printing the item names.
                                                                   If it has one parameter, it is just the item to be printed.
                                                                   If it has two parameters, the second one is the maximum name width before cut-off.
                                                                   If it has three parameters, the third one is the color for the list items.
 
-            rebindCommand (str: str): dictionary for rebinding internal commands to other keys (e.g. rebindCommand[key.CTRL_F] = key.CTRL_S will bind searching by string to ctrl+s instead of ctrl+f). 
-                                      Binding multiple commands to the same key will lead to only one of them being detected.
+            helpPage (str): user instructions for all application commands.
 
             disableHelp (bool): disable the "Type '?' for help page." message and help page printing.
-
-            dontPrintList (bool): set True to stop the list from being printed on __init__.
 
             topTextColor (str | (int, int, int)): the color for the text displayed above the list (the default is the standard console light gray).
                                                   If string, must be compatible with termcolor.colored.
@@ -115,6 +115,8 @@ class ConsoleListInterface:
             helpSearchColor (str | (int, int, int)): the color for the help-page and search messages (the default is the standard console light gray).
                                                      If string, must be compatible with termcolor.colored.
                                                      If int tuple, it will be the RGB values.
+
+            dontPrintList (bool): set True to stop the list from being printed on __init__.
 
             supressColorWarning (bool): set this to True if the 'grey' color option prints visibly in the terminal, 
                                         in order to supress the warning for it.
@@ -142,7 +144,7 @@ class ConsoleListInterface:
 
         self._separateInteractionPos = max(int(os.get_terminal_size()[1] / 2) - 4, 0)
         
-        self._shownColumns = self._STARTCOLUMNNO
+        self._shownColumns = shownColumns
         self._maxNameWidth = int(self._consoleWidth / self._shownColumns) - self._SPACESBEFORE
 
         self._column = int((startPos) / self._itemsPerColumn) + 1
@@ -152,14 +154,14 @@ class ConsoleListInterface:
 
         self._items           = [item.replace('\n', '') for item in items] # accidental '\n' fucks up printing
         self._specialCommands = [lowercaseKey(command) for command in specialCommands]
-        self._helpPage        = helpPage
-        self._printFunc       = printFunc
-        self._commandBind     = {command: (command if command not in rebindCommand else lowercaseKey(rebindCommand[command])) for command in self._INTERNALCOMMANDS}
+        self._commandBind     = {command: (command if command not in rebindCommands else lowercaseKey(rebindCommands[command])) for command in self._INTERNALCOMMANDS}
         self._actualCommands  = self._commandBind.values() # all the values that internal commands are bound to
+        self._printFunc       = printFunc
+        self._helpPage        = helpPage
         self._disableHelp     = disableHelp
         self._topTextColor    = topTextColor
         self._itemColor       = itemColor
-        self._helpSearchColor       = helpSearchColor
+        self._helpSearchColor = helpSearchColor
 
         self._totalColumns      = roundup(len(self._items) / self._itemsPerColumn)
         self._lastColumnHeight  = len(self._items) % self._itemsPerColumn
@@ -495,7 +497,7 @@ class ConsoleListInterface:
                 continue
 
     def separateInteraction(self, message: Optional[str] = None, function: Optional[Callable[[Any], Any]] = None, functionArgs: Optional[Any] = None, 
-                            startAtTop: bool = False, showCursor: bool = False, waitInsteadOfEnter: float = None):
+                            startAtTop: bool = False, showCursor: bool = False, waitInsteadOfEnter: Optional[float] = None):
         """This method is for user interaction separate from the list interface.
         Once finished, it will reprint the list.
         
@@ -661,20 +663,24 @@ class ConsoleListInterface:
         """
         setTitle(title)
 
-    def configure(self, printFunc: Optional[Callable[[str, int], int]] = None, specialCommands: list[str] = None, rebindCommand: dict[str, str] = None, 
+    def configure(self, specialCommands: list[str] = None, rebindCommands: dict[str, str] = None, shownColumns: int = None, printFunc: Callable[[str, int], int] = None,  
                   helpPage: str = None, topTextColor: Union[str, tuple[int, int, int]] = None, itemColor: Union[str, tuple[int, int, int]] = None, 
-                  helpSearchColor: Union[str, tuple[int, int, int]] = None, supressColorWarning: bool = False):
+                  helpSearchColor: Union[str, tuple[int, int, int]] = None, dontPrintList: bool = False, supressColorWarning: bool = False):
         """Change one or more of the configurable functionalities.
 
         Args:
             specialCommands (list[str]): new list of special commands, which will overwrite the original special commands list.
 
-            helpPage (str): new user instructions for all application commands.
+            rebindCommands: dict[str, str]: dictionary for rebinding internal commands (commands not in rebindCommands remain untouched).
+
+            shownColumns (int): change the number of columns to be shown at a time in the console programmatically.
+                                Important note: by default, the user can increase and decrease the number of columns with the '+' and '-' keys respectively.
+                                '+' and '-' can be ignored as commands by adding them to the special commands.
 
             printFunc ((str, int) -> str): the new function for printing the item names (str is the name and int is the cut-off for the name length).
                                            Reset the printing function by configuring it to the 'ConsoleListInterface.defaultPrintFunc' function. 
 
-            rebindCommand: dict[str, str]: dictionary for rebinding internal commands (commands not in rebindCommand remain untouched).
+            helpPage (str): new user instructions for all application commands.
 
             topTextColor (str | (int, int, int)): the color for the text displayed above the list (the default is the standard console light gray).
                                                   If string, must be compatible with termcolor.colored.
@@ -687,6 +693,8 @@ class ConsoleListInterface:
             helpSearchColor (str | (int, int, int)): the color for the help-page and search messages (the default is the standard console light gray).
                                                      If string, must be compatible with termcolor.colored.
                                                      If int tuple, it will be the RGB values.
+
+            dontPrintList (bool): set True to stop the list from being printed when the visible interface is changed.
 
             supressColorWarning (bool): set this to True if the 'grey' color option prints visibly in the terminal, 
                                         in order to supress the warning for it.
@@ -704,15 +712,18 @@ class ConsoleListInterface:
         if specialCommands: 
             self._specialCommands = specialCommands
 
-        if helpPage:
-            self._helpPage = helpPage
+        if rebindCommands:
+            self._commandBind     = {command: (self._commandBind[command] if command not in rebindCommands else lowercaseKey(rebindCommands[command])) for command in self._commandBind}
+            self._actualCommands  = self._commandBind.values() # all the values that internal commands are bound to
+
+        if shownColumns:
+            self._shownColumns = shownColumns
         
         if printFunc:
             self._printFunc = printFunc
 
-        if rebindCommand:
-            self._commandBind     = {command: (self._commandBind[command] if command not in rebindCommand else lowercaseKey(rebindCommand[command])) for command in self._commandBind}
-            self._actualCommands  = self._commandBind.values() # all the values that internal commands are bound to
+        if helpPage:
+            self._helpPage = helpPage
 
         if topTextColor:
             self._topTextColor = topTextColor
@@ -722,6 +733,10 @@ class ConsoleListInterface:
 
         if helpSearchColor:
             self._helpSearchColor = helpSearchColor
+
+        # if any of these properties have been reconfigured, the visible interface will have changed
+        if shownColumns or printFunc or topTextColor or itemColor or helpSearchColor and not dontPrintList:
+            self.printList()
 
     def disableHelpPage(self, disableHelp: Optional[bool] = None):
         """Change whether the "Type '?' for help page." message is shown and the help page is printed.

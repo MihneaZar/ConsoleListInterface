@@ -467,12 +467,16 @@ class ConsoleListInterface:
                 continue
 
             # making item names shorter
-            if command == self._commandBind['-'] and self._MINNAMEWIDTH <= self._maxNameWidth:
-                # changing the width of item names to leave space for an additional column
-                self._shownColumns += 1
-                self._maxNameWidth  = int(self._consoleWidth / self._shownColumns) - self._SPACESBEFORE
+            if command == self._commandBind['-']:
+                # changing the width of item names to leave space for one additional column
+                newMaxNameWidth = int(self._consoleWidth / (self._shownColumns + 1)) - self._SPACESBEFORE
+                # checking that the **new** max width is at least equal to the minimum allowed
+                if self._MINNAMEWIDTH <= newMaxNameWidth:
+                    self._shownColumns += 1
+                    self._maxNameWidth  = newMaxNameWidth
 
-                self.printList()
+                    # only reprint if the max width has actually been changed
+                    self.printList()
 
                 continue
 

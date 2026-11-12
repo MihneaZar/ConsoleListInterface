@@ -45,9 +45,6 @@ class ConsoleListInterface:
     # the minimum width of item names
     _MINNAMEWIDTH = 8
 
-    # starting number of columns
-    _STARTCOLUMNNO = 3
-
     # the commands recognized by default by the interface
     # the interface will ignore them if they are passed to the specialCommands list
     # and they can be rebound to other keys through the rebindCommands dictionary

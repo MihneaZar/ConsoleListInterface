@@ -55,7 +55,8 @@ class MenuInterface(ConsoleListInterface):
 
 
     def __init__(self, menuStructure: dict[str, dict], submenuColor: Union[str, tuple[int, int, int]] = 'blue', optionColor: Union[str, tuple[int, int, int]] = 'light_blue', 
-                 helpColor: Union[str, tuple[int, int, int]] = 'light_blue', supressColorWarning: bool = False, dontPrintMenu: bool = False, escOnAnyMenu: bool = False, columnNo: int = 1, truncateNames: bool = False):
+                 helpColor: Union[str, tuple[int, int, int]] = 'light_blue', shownColumns: int = 1, escOnAnyMenu: bool = False, 
+                 truncateNames: bool = False, dontPrintMenu: bool = False, supressColorWarning: bool = False):
         """Intializes console interface.
 
         Args:
@@ -76,22 +77,22 @@ class MenuInterface(ConsoleListInterface):
                                                If string, must be compatible with termcolor.colored.
                                                If int tuple, it will be the RGB values.
 
-            supressColorWarning (bool): set this to True if the 'grey' color option prints visibly in the terminal, 
-                                        in order to supress the warning for it.
-
-            dontPrintMenu (bool): set to True to stop the Main Menu from being printed on __init__.
+            shownColumns (int): number of menu columns to be shown at a time in the console.
+                                If too high, submenu and option names will be truncated.
+                                By default, it is 1, to allow for longest possible names.
 
             escOnAnyMenu (bool): set to True to accept key.ESC on any submenu, not just the main menu.
 
-            columnNo (int): set the number of possible columns for the menu interface.
-                            If too high, submenu and option names will be truncated.
-                            By default, it is 1, to allow for longest possible names. 
-
             truncateNames (bool): whether to truncate submenu and option names (default False).
-                                  If True, it will truncate names that are longer than the column width (roughly determined by console width // columnNo).
+                                  If True, it will truncate names that are longer than the column width (roughly determined by console width // shownColumns).
                                   If False, it will avoid truncating, but that might cause one of the following issues:
                                       - names might overflow onto the next console line (and potentially overwrite the next submenu or option);
-                                      - if columnNo is higher than 1, and the columns are too close, names might overwrite each other. 
+                                      - if shownColumns is higher than 1, and the columns are too close, names might overwrite each other. 
+
+            dontPrintMenu (bool): set to True to stop the Main Menu from being printed on __init__.
+
+            supressColorWarning (bool): set this to True if the 'grey' color option prints visibly in the terminal, 
+                                        in order to supress the warning for it.
 
         Returns: 
             A MenuInterface object.
@@ -111,14 +112,13 @@ class MenuInterface(ConsoleListInterface):
         self._currentMenu   = next(iter(menuStructure.values())) # obtaining Main Menu
         self._submenuColor  = submenuColor
         self._escOnAnyMenu  = escOnAnyMenu
-        self._STARTCOLUMNNO = columnNo
         
         # rebinds to nothing for all the unused ConsoleListInterface internal commands
         rebindUnused = {command: "" for command in MenuInterface._INTERNALCOMMANDS if command not in MenuInterface._KEEPCOMMANDS}
         
-        super(MenuInterface, self).__init__(items=list(self._currentMenu.keys()), specialCommands=self._SPECIALCOMMANDS, helpPage=_HELPPAGEMAIN, rebindCommand=rebindUnused, dontPrintList=True, # the list will be reprinted anyway in setTopText
+        super(MenuInterface, self).__init__(items=list(self._currentMenu.keys()), specialCommands=self._SPECIALCOMMANDS, rebindCommands=rebindUnused, shownColumns=shownColumns,
                                             printFunc=lambda optionName, maxNameWidth: MenuInterface._menuPrintFunc(optionName, maxNameWidth, self._currentMenu, submenuColor, optionColor, truncateNames), 
-                                            helpSearchColor=helpColor, supressColorWarning=supressColorWarning)
+                                            helpPage=_HELPPAGEMAIN, helpSearchColor=helpColor, dontPrintList=True, supressColorWarning=supressColorWarning) # dontPrintList=True since the list will be printed in setTopText
 
         self.setTopText(colored(next(iter(menuStructure.keys())), self._submenuColor) + '\n', dontPrintList=dontPrintMenu) # Main Menu name
     

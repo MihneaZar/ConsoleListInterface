@@ -74,7 +74,7 @@ class ConsoleListInterface:
 
 
     def __init__(self, items: list[str] = [], specialCommands: list[str] = [key.ENTER, key.ESC], rebindCommands: dict[str, str] = {}, startPos: int = 0, 
-                 shownColumns: int = 3, printFunc: Callable[[str, int], int] = defaultPrintFunc, helpPage: str = DEFAULTHELP, disableHelp: bool = False, 
+                 shownColumns: int = 3, printFunc: Callable[[str, int, Union[str, tuple[int, int, int]]], int] = defaultPrintFunc, helpPage: str = DEFAULTHELP, disableHelp: bool = False, 
                  topTextColor: Union[str, tuple[int, int, int]] = 'light_grey', itemColor: Union[str, tuple[int, int, int]] = 'light_grey', 
                  helpSearchColor: Union[str, tuple[int, int, int]] = 'light_grey', dontPrintList: bool = False, supressColorWarning: bool = False):
         """Intializes console interface.
@@ -664,7 +664,7 @@ class ConsoleListInterface:
         """
         setTitle(title)
 
-    def configure(self, specialCommands: list[str] = None, rebindCommands: dict[str, str] = None, shownColumns: int = None, printFunc: Callable[[str, int], int] = None,  
+    def configure(self, specialCommands: list[str] = None, rebindCommands: dict[str, str] = None, shownColumns: int = None, printFunc: Callable[[str, int, Union[str, tuple[int, int, int]]], int] = None,  
                   helpPage: str = None, topTextColor: Union[str, tuple[int, int, int]] = None, itemColor: Union[str, tuple[int, int, int]] = None, 
                   helpSearchColor: Union[str, tuple[int, int, int]] = None, dontPrintList: bool = False, supressColorWarning: bool = False):
         """Change one or more of the configurable functionalities.
@@ -678,7 +678,10 @@ class ConsoleListInterface:
                                 Important note: by default, the user can increase and decrease the number of columns with the '+' and '-' keys respectively.
                                 '+' and '-' can be ignored as commands by adding them to the special commands.
 
-            printFunc ((str, int) -> str): the new function for printing the item names (str is the name and int is the cut-off for the name length).
+            printFunc ((str, int, str | (int, int, int)) -> str): the new custom function for printing the item names.
+                                                                  If it has one parameter, it is just the item to be printed.
+                                                                  If it has two parameters, the second one is the maximum name width before cut-off.
+                                                                  If it has three parameters, the third one is the color for the list items.
                                            Reset the printing function by configuring it to the 'ConsoleListInterface.defaultPrintFunc' function. 
 
             helpPage (str): new user instructions for all application commands.

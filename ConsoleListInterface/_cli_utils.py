@@ -50,7 +50,8 @@ def autocomplete(autocompleteList: list[str] = [], updateAutocomplete: Callable[
 
     print(prompt, end='', flush=True)
     
-    lastAutocomplete = ""
+    lastAutocomplete    = ""
+    currentAutocomplete = ""
     autocompletePos = -1 # using arrow keys up and down to cycle through all autocomplete option which include string
     stringPos = 0 # position for moving left and right through string 
     string = ""
@@ -130,53 +131,101 @@ def autocomplete(autocompleteList: list[str] = [], updateAutocomplete: Callable[
                 continue
 
         # removing previous autocomplete
-        print(string[stringPos:] + ' ' * len(lastAutocomplete) + '\b' * len(lastAutocomplete), end='', flush=True)
+        # print(string[stringPos:] + ' ' * len(lastAutocomplete) + '\b' * len(lastAutocomplete), end='', flush=True)
 
+
+        # first, changing the input string based on key
         # tab (for autocomplete)
         if char == key.TAB:
+            stringPos = len(string) # stringPos will save the position from where the autocomplete was triggered
+        
             if string != "":
                 string += lastAutocomplete
-                print(colored(lastAutocomplete, inputColor), end='', flush=True)
-            elif len(autocompleteList) != 0:
+            elif autocompleteList:
                 string = autocompleteList[0]
-                print(colored(string, inputColor), end='', flush=True)
-
-            stringPos = len(string)
-            printChar = False
 
         # backspace
-        if char == key.BACKSPACE:
-            if 1 <= stringPos: # only allow backspace when string is not empty!! (and when stringPos is not in first position)
+        elif char == key.BACKSPACE:
+            if 1 <= stringPos: # only allow backspace when string is not empty and when not in the first position in string
                 string = string[:stringPos - 1] + string[stringPos:]
-                # this is some of the most convoluted math ive ever had to fucking do
-                # dont  ask me why its + 2 PLEASUH
-                print('\b' * (len(string) - stringPos + 2) + string[stringPos - 1:] + ' ' + '\b' * (len(string) - stringPos + 2), end='', flush=True)
-                stringPos -= 1
-            
-            printChar = False
 
         # normal char to be printed
         # ctrl+j is '\n' and that fucks things up
-        if printChar and char != '\n':
+        elif char != '\n':
             string = string[:stringPos] + char + string[stringPos:]
-            print('\b' * (len(string) - stringPos - 1) + colored(string[stringPos:] + '\b' * (len(string) - stringPos - 1), inputColor), end='', flush=True)
-            stringPos += 1
+
 
         # update autocompleteList
         if updateAutocomplete:
             newAutocomplete = updateAutocomplete(string)
             if newAutocomplete:
                 autocompleteList = newAutocomplete
-
                 autocompletePos = -1 # if the autocomplete list is updated, the previous up/down position is not valid anymore
-    
-        # update autocomplete and print it
+                
+        # find next autocomplete option
         if string:
             # searches for first autocomplete option that starts with the inputted string
             # the string != complete is so that when the string is one of the existing options, it autocompletes to the next match
-            lastAutocomplete = next((complete for complete in autocompleteList if complete.startswith(string) and string != complete), "")[len(string):]
-            print(colored(lastAutocomplete, autocompleteColor), end='', flush=True)
-            print("\b" * len(lastAutocomplete), end='', flush=True)
+            currentAutocomplete = next((complete for complete in autocompleteList if complete.startswith(string) and string != complete), "")[len(string):]
+            # input(string)
+            # input(lastAutocomplete)
+
+
+        # printing the changes to string and to the autocomplete
+        if char == key.TAB:
+            print(colored(string[stringPos:], inputColor), end='', flush=True)
+            if currentAutocomplete: 
+                print(colored(currentAutocomplete, autocompleteColor) + '\b' * len(currentAutocomplete), end='', flush=True)
+            stringPos = len(string)
+
+        # backspace
+        elif char == key.BACKSPACE:
+            if 1 <= stringPos: # only allow backspace when string is not empty and when not in the first position in string
+                # autocomplete option has been changed
+                if lastAutocomplete != currentAutocomplete[1:]:
+                    print(' ' * len(lastAutocomplete) + '\b' * len(lastAutocomplete), end='', flush=True)
+                print('\b \b', end='', flush=True)
+                if currentAutocomplete:
+                    print(colored(currentAutocomplete[0] + '\b', autocompleteColor), end='', flush=True)
+                stringPos -= 1
+
+        elif char != '\n':
+            # autocomplete option has been changed
+            if lastAutocomplete[1:] != currentAutocomplete:
+                print(' ' * len(lastAutocomplete) + '\b' * len(lastAutocomplete), end='', flush=True)
+            print(colored(char, inputColor), end='', flush=True)
+            print(colored(currentAutocomplete, autocompleteColor) + '\b' * len(currentAutocomplete), end='', flush=True)
+            stringPos += 1
+
+        lastAutocomplete = currentAutocomplete
+
+        # # backspace
+        # if char == key.BACKSPACE:
+        #     if 1 <= stringPos: # only allow backspace when string is not empty!! (and when stringPos is not in first position)
+        #         string = string[:stringPos - 1] + string[stringPos:]
+        #         # this is some of the most convoluted math ive ever had to fucking do
+        #         # dont  ask me why its + 2 PLEASUH
+        #         print('\b' * (len(string) - stringPos + 2) + string[stringPos - 1:] + ' ' + '\b' * (len(string) - stringPos + 2), end='', flush=True)
+        #         stringPos -= 1
+            
+        #     printChar = False
+
+        # # normal char to be printed
+        # # ctrl+j is '\n' and that fucks things up
+        # if printChar and char != '\n':
+        #     string = string[:stringPos] + char + string[stringPos:]
+        #     print('\b' * (len(string) - stringPos - 1) + colored(string[stringPos:] + '\b' * (len(string) - stringPos - 1), inputColor), end='', flush=True)
+        #     stringPos += 1
+
+        
+    
+        # # update autocomplete and print it
+        # if string:
+        #     # searches for first autocomplete option that starts with the inputted string
+        #     # the string != complete is so that when the string is one of the existing options, it autocompletes to the next match
+        #     lastAutocomplete = next((complete for complete in autocompleteList if complete.startswith(string) and string != complete), "")[len(string):]
+        #     print(colored(lastAutocomplete, autocompleteColor), end='', flush=True)
+        #     print("\b" * len(lastAutocomplete), end='', flush=True)
 
 def moveCursor(y: int, x: int):
     """Function for moving the cursor to a different position in the console.

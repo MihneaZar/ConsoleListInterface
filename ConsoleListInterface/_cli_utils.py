@@ -45,8 +45,8 @@ def autocomplete(autocompleteList: list[str] = [], updateAutocomplete: Callable[
         print("Press enter to continue.\n")
         waitForEnter()
 
-    # removing non-string autocomplete options, just in case
-    autocompleteList = [option for option in autocompleteList if type(option) is str]
+    # removing non-string autocomplete options and empty automcomplete options, just in case
+    autocompleteList = [option for option in autocompleteList if type(option) is str and (option and not option.isspace())]
 
     print(prompt, end='', flush=True)
     

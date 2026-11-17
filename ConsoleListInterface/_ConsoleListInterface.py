@@ -323,7 +323,7 @@ class ConsoleListInterface:
                     moveCursor(self._separateInteractionPos, 0)
                     cursor.show()
                     # using autocomplete for the ctrl+f search function
-                    searchStr = autocomplete(self._items, colored("String to search by:\n", self._helpSearchColor), exitOnEsc=True)
+                    searchStr = autocomplete(self._items, prompt=colored("String to search by:\n", self._helpSearchColor), exitOnEsc=True)
                     self._searchStr = searchStr.lower() if searchStr else "" # since autocomplete can return None when esc is pressed
                     cursor.hide()
                     cls()

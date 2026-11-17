@@ -149,7 +149,7 @@ def autocomplete(autocompleteList: list[str] = [], updateAutocomplete: Callable[
 
         # normal char to be printed
         # ctrl+j is '\n' and that fucks things up
-        elif char != '\n':
+        elif char not in [key.UP, key.DOWN, '\n']:
             string = string[:stringPos] + char + string[stringPos:]
 
 
@@ -212,7 +212,7 @@ def autocomplete(autocompleteList: list[str] = [], updateAutocomplete: Callable[
 
                 stringPos -= 1
 
-        elif char != '\n':
+        elif char not in [key.UP, key.DOWN, '\n']:
             # treating characters being added at the very end separately, since it functions differently
             if stringPos == len(string) - 1: 
                 # autocomplete option has been changed

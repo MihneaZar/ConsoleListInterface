@@ -115,8 +115,7 @@ class ConsoleListInterface:
 
             dontPrintList (bool): set True to stop the list from being printed on __init__.
 
-            supressColorWarning (bool): set this to True if the 'grey' color option prints visibly in the terminal, 
-                                        in order to supress the warning for it.
+            supressColorWarning (bool): set this to True if the 'grey' color option prints visibly in the terminal, in order to supress the warning for it.
 
         Returns:
             ConsoleListInterface object.
@@ -682,7 +681,7 @@ class ConsoleListInterface:
                                                                   If it has one parameter, it is just the item to be printed.
                                                                   If it has two parameters, the second one is the maximum name width before cut-off.
                                                                   If it has three parameters, the third one is the color for the list items.
-                                           Reset the printing function by configuring it to the 'ConsoleListInterface.defaultPrintFunc' function. 
+                                                                  Reset the printing function by configuring it to the 'ConsoleListInterface.defaultPrintFunc' function. 
 
             helpPage (str): new user instructions for all application commands.
 

@@ -130,9 +130,6 @@ def autocomplete(autocompleteList: list[str] = [], updateAutocomplete: Callable[
             else: 
                 continue
 
-        # removing previous autocomplete
-        # print(string[stringPos:] + ' ' * len(lastAutocomplete) + '\b' * len(lastAutocomplete), end='', flush=True)
-
 
         # first, changing the input string based on key
         # tab (for autocomplete)
@@ -146,7 +143,8 @@ def autocomplete(autocompleteList: list[str] = [], updateAutocomplete: Callable[
 
         # backspace
         elif char == key.BACKSPACE:
-            if 1 <= stringPos: # only allow backspace when string is not empty and when not in the first position in string
+            # only allow backspace when string is not empty and when not in the first position in string
+            if 1 <= stringPos:
                 string = string[:stringPos - 1] + string[stringPos:]
 
         # normal char to be printed
@@ -184,14 +182,18 @@ def autocomplete(autocompleteList: list[str] = [], updateAutocomplete: Callable[
 
         # backspace
         elif char == key.BACKSPACE:
-            if 1 <= stringPos: # only allow backspace when string is not empty and when not in the first position in string
+            # only allow backspace when string is not empty and when not in the first position in string
+            if 1 <= stringPos: 
+                # treating backspace at the very end separately, since it functions differently
                 if stringPos == len(string) + 1: 
                     # autocomplete option has been changed
                     if lastAutocomplete != currentAutocomplete[1:]:
                         print(' ' * len(lastAutocomplete) + '\b' * len(lastAutocomplete), end='', flush=True)
+                    # the actual deletion of the character
                     print('\b \b', end='', flush=True)
                     if currentAutocomplete:
                         print(colored(currentAutocomplete[0] + '\b', autocompleteColor), end='', flush=True)
+
                 else:
                     # removing the tail end of the string (after the backspace) and the previous autocomplete
                     replaceString = ' ' * (len(string) - stringPos + 1) + ' ' * len(lastAutocomplete) + '\b' * len(lastAutocomplete) + '\b' * (len(string) - stringPos + 2)
@@ -211,42 +213,31 @@ def autocomplete(autocompleteList: list[str] = [], updateAutocomplete: Callable[
                 stringPos -= 1
 
         elif char != '\n':
-            # autocomplete option has been changed
-            if lastAutocomplete[1:] != currentAutocomplete:
-                print(' ' * len(lastAutocomplete) + '\b' * len(lastAutocomplete), end='', flush=True)
-            print(colored(char, inputColor), end='', flush=True)
-            print(colored(currentAutocomplete, autocompleteColor) + '\b' * len(currentAutocomplete), end='', flush=True)
+            # treating characters being added at the very end separately, since it functions differently
+            if stringPos == len(string) - 1: 
+                # autocomplete option has been changed
+                if lastAutocomplete[1:] != currentAutocomplete:
+                    print(' ' * len(lastAutocomplete) + '\b' * len(lastAutocomplete), end='', flush=True)
+                print(colored(char, inputColor) + colored(currentAutocomplete, autocompleteColor) + '\b' * len(currentAutocomplete), end='', flush=True)
+
+            else:
+                # for priting the string from where the character was added, then the new autocomplete 
+                replaceString = colored(string[stringPos:], inputColor) + colored(currentAutocomplete, autocompleteColor)
+
+                # clearing the previous autocomplete option if it's longer than the current one plus the new character added
+                if len(currentAutocomplete) + 1 < len(lastAutocomplete):
+                    lengthDiff = len(lastAutocomplete) - len(currentAutocomplete) - 1
+                    replaceString += ' ' * lengthDiff + '\b' * lengthDiff
+
+                # returning to current position in string
+                replaceString += '\b' * (len(string) - stringPos - 1 + len(currentAutocomplete))
+
+                # printing it all in one go to avoid glitchiness
+                print(replaceString, end='', flush=True)
+
             stringPos += 1
 
         lastAutocomplete = currentAutocomplete
-
-        # # backspace
-        # if char == key.BACKSPACE:
-        #     if 1 <= stringPos: # only allow backspace when string is not empty!! (and when stringPos is not in first position)
-        #         string = string[:stringPos - 1] + string[stringPos:]
-        #         # this is some of the most convoluted math ive ever had to fucking do
-        #         # dont  ask me why its + 2 PLEASUH
-        #         print('\b' * (len(string) - stringPos + 2) + string[stringPos - 1:] + ' ' + '\b' * (len(string) - stringPos + 2), end='', flush=True)
-        #         stringPos -= 1
-            
-        #     printChar = False
-
-        # # normal char to be printed
-        # # ctrl+j is '\n' and that fucks things up
-        # if printChar and char != '\n':
-        #     string = string[:stringPos] + char + string[stringPos:]
-        #     print('\b' * (len(string) - stringPos - 1) + colored(string[stringPos:] + '\b' * (len(string) - stringPos - 1), inputColor), end='', flush=True)
-        #     stringPos += 1
-
-        
-    
-        # # update autocomplete and print it
-        # if string:
-        #     # searches for first autocomplete option that starts with the inputted string
-        #     # the string != complete is so that when the string is one of the existing options, it autocompletes to the next match
-        #     lastAutocomplete = next((complete for complete in autocompleteList if complete.startswith(string) and string != complete), "")[len(string):]
-        #     print(colored(lastAutocomplete, autocompleteColor), end='', flush=True)
-        #     print("\b" * len(lastAutocomplete), end='', flush=True)
 
 def moveCursor(y: int, x: int):
     """Function for moving the cursor to a different position in the console.

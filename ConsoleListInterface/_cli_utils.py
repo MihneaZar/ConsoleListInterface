@@ -90,8 +90,8 @@ def autocomplete(autocompleteList: list[str] = [], updateAutocomplete: Callable[
                     if autocompletePos < 0:
                         autocompletePos = len(upDownMatches) - 1
 
-                # at least two autocomplete matches to cycle between
-                if 2 <= len(upDownMatches):
+                # at least two autocomplete matches to cycle between or string is not already equal to the singular match
+                if 2 <= len(upDownMatches) or (upDownMatches and string != upDownMatches[0]):
                     # removing last autocomplete
                     print(string[stringPos:] + ' ' * len(lastAutocomplete) + '\b' * len(lastAutocomplete), end='', flush=True)
                     # removing previous input for string and moving cursor to beginning position

@@ -170,6 +170,10 @@ def autocomplete(autocompleteList: list[str] = [], updateAutocomplete: Callable[
             # input(string)
             # input(lastAutocomplete)
 
+        # delete autocomplete when string becomes empty
+        else:
+            currentAutocomplete = ""
+
 
         # printing the changes to string and to the autocomplete
         if char == key.TAB:
@@ -181,12 +185,29 @@ def autocomplete(autocompleteList: list[str] = [], updateAutocomplete: Callable[
         # backspace
         elif char == key.BACKSPACE:
             if 1 <= stringPos: # only allow backspace when string is not empty and when not in the first position in string
-                # autocomplete option has been changed
-                if lastAutocomplete != currentAutocomplete[1:]:
-                    print(' ' * len(lastAutocomplete) + '\b' * len(lastAutocomplete), end='', flush=True)
-                print('\b \b', end='', flush=True)
-                if currentAutocomplete:
-                    print(colored(currentAutocomplete[0] + '\b', autocompleteColor), end='', flush=True)
+                if stringPos == len(string) + 1: 
+                    # autocomplete option has been changed
+                    if lastAutocomplete != currentAutocomplete[1:]:
+                        print(' ' * len(lastAutocomplete) + '\b' * len(lastAutocomplete), end='', flush=True)
+                    print('\b \b', end='', flush=True)
+                    if currentAutocomplete:
+                        print(colored(currentAutocomplete[0] + '\b', autocompleteColor), end='', flush=True)
+                else:
+                    # removing the tail end of the string (after the backspace) and the previous autocomplete
+                    replaceString = ' ' * (len(string) - stringPos + 1) + ' ' * len(lastAutocomplete) + '\b' * len(lastAutocomplete) + '\b' * (len(string) - stringPos + 2)
+
+                    # re-adding tail end without deleted character
+                    replaceString += colored(string[stringPos - 1:], inputColor)
+
+                    # adding new autocomplete option
+                    replaceString += colored(currentAutocomplete, autocompleteColor)
+
+                    # returning to actual position in string
+                    replaceString += '\b' * (len(string) - stringPos + 1 + len(currentAutocomplete))
+
+                    # printing it all in one go to avoid glitchiness
+                    print(replaceString, end='', flush=True)
+
                 stringPos -= 1
 
         elif char != '\n':

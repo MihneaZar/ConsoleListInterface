@@ -1,16 +1,21 @@
+from typing import Callable, Union, Optional
 from readchar import readkey, key
 from termcolor import colored
-from typing import Union
 import sys
 import os
 import re
 
-def autocomplete(autocompleteList: list[str] = [], prompt: str = "", inputColor: Union[str, tuple[int, int, int]] = "light_grey", 
+def autocomplete(autocompleteList: list[str] = [], updateAutocomplete: Callable[[str], Optional[list[str]]] = None, prompt: str = "", inputColor: Union[str, tuple[int, int, int]] = "light_grey", 
                  autocompleteColor: Union[str, tuple[int, int, int]] = "white", supressColorWarning: bool = False, exitOnEsc: bool = False):
     """Function for console input with autocomplete feature.
     
     Args:
         autocompleteList (list[str]): list of possible autocomplete candidates.
+
+        updateAutocomplete (str -> list[str]): function for updating the autocomplete list based on current input string.
+                                               Will be called on all accepted key strokes other than left-right arrow keys (which don't change the string).
+                                               If the function returns a list of strings, that list of strings overwrites the autocomplete list.
+                                               Otherwise, the autocomplete list remains unchanged.
 
         prompt (str): the prompt for the user input.
 
@@ -106,7 +111,7 @@ def autocomplete(autocompleteList: list[str] = [], prompt: str = "", inputColor:
         elif char != key.ESC: # ignoring ESC when exitOnEsc is False
             # reseting up/down cycle if arrow keys are not pressed
             # even if it is left/right being pressed, those are the only ones which don't change the actual string
-            autocompletePos = -1 
+            autocompletePos = -1
 
 
         # confirm input
@@ -156,6 +161,14 @@ def autocomplete(autocompleteList: list[str] = [], prompt: str = "", inputColor:
             print('\b' * (len(string) - stringPos - 1) + colored(string[stringPos:] + '\b' * (len(string) - stringPos - 1), inputColor), end='', flush=True)
             stringPos += 1
 
+        # update autocompleteList
+        if updateAutocomplete:
+            newAutocomplete = updateAutocomplete(string)
+            if newAutocomplete:
+                autocompleteList = newAutocomplete
+
+                autocompletePos = -1 # if the autocomplete list is updated, the previous up/down position is not valid anymore
+    
         # update autocomplete and print it
         if string:
             # searches for first autocomplete option that starts with the inputted string

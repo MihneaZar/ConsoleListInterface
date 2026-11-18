@@ -304,8 +304,8 @@ class ConsoleListInterface:
             if command not in self._actualCommands:
                 first_letter = command.lower()
                 current_position = self._getPos()
-                new_position = next((i for i in range(len(self._items)) if self._items[i][0].lower() == first_letter and i > current_position), 
-                                next((i for i in range(len(self._items)) if self._items[i][0].lower() == first_letter), current_position))
+                new_position = next((i for i in range(len(self._items)) if self._items[i].lower().startswith(first_letter) and i > current_position), 
+                                next((i for i in range(len(self._items)) if self._items[i].lower().startswith(first_letter)), current_position))
 
 
                 if new_position != current_position:

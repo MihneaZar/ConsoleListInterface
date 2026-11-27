@@ -191,8 +191,7 @@ def autocomplete(autocompleteList: list[str] = [], updateAutocomplete: Callable[
                         print(' ' * len(lastAutocomplete) + '\b' * len(lastAutocomplete), end='', flush=True)
                     # the actual deletion of the character
                     print('\b \b', end='', flush=True)
-                    if currentAutocomplete:
-                        print(colored(currentAutocomplete[0] + '\b', autocompleteColor), end='', flush=True)
+                    print(colored(currentAutocomplete + '\b' * len(currentAutocomplete), autocompleteColor), end='', flush=True)
 
                 else:
                     # removing the tail end of the string (after the backspace) and the previous autocomplete

@@ -58,9 +58,6 @@ def autocomplete(autocompleteList: list[str] = [], updateAutocomplete: Callable[
     while True: 
         char = readkey()
 
-        # not printing special keys (backspace, tab, arrow keys)
-        printChar = True
-
         # 1 < len(char) for multiple-character keys like the arrow keys 
         if 1 < len(char):
             # moving left/right through string
@@ -94,17 +91,19 @@ def autocomplete(autocompleteList: list[str] = [], updateAutocomplete: Callable[
                 # at least two autocomplete matches to cycle between or string is not already equal to the singular match
                 if 2 <= len(upDownMatches) or (upDownMatches and string != upDownMatches[0]):
                     # removing last autocomplete
-                    print(string[stringPos:] + ' ' * len(lastAutocomplete) + '\b' * len(lastAutocomplete), end='', flush=True)
+                    replaceString = string[stringPos:] + ' ' * len(lastAutocomplete) + '\b' * len(lastAutocomplete)
+
                     # removing previous input for string and moving cursor to beginning position
-                    print('\b' * len(string) + ' ' * len(string) + '\b' * len(string), end='', flush=True)
-                    string = upDownMatches[autocompletePos]
-                    print(string, end='', flush=True)
+                    replaceString += '\b' * len(string) + ' ' * len(string) + '\b' * len(string)
 
+                    # adding current autocomplete
+                    replaceString += upDownMatches[autocompletePos]
+
+                    # printing it all in one go for smoother experience
+                    print(replaceString, end='', flush=True)
+
+                    # cursor moves to the end of the new autocompleted string
                     stringPos = len(string)
-
-                # printChar = False rather than continue so that the next autocomplete option can be shown
-                # (think 'test' and 'testing')
-                printChar = False
 
             # ignoring all other multiple-character keys
             else:
@@ -173,11 +172,19 @@ def autocomplete(autocompleteList: list[str] = [], updateAutocomplete: Callable[
             currentAutocomplete = ""
 
 
-        # printing the changes to string and to the autocomplete
+        # then, actually printing the changes to the string and to the autocomplete
+        # tab
         if char == key.TAB:
-            print(colored(string[stringPos:], inputColor), end='', flush=True)
+            # adding the autocompleted part of the string
+            replaceString = colored(string[stringPos:], inputColor)
+
+            # adding the next autocomplete, if it exists (think hitting tab on 'test' with 'testing' being the next autocomplete option)
             if currentAutocomplete: 
-                print(colored(currentAutocomplete, autocompleteColor) + '\b' * len(currentAutocomplete), end='', flush=True)
+                replaceString += colored(currentAutocomplete, autocompleteColor) + '\b' * len(currentAutocomplete)
+
+            # printing it all in one go for smoother experience
+            print(replaceString, end='', flush=True)
+
             stringPos = len(string)
 
         # backspace
@@ -186,12 +193,24 @@ def autocomplete(autocompleteList: list[str] = [], updateAutocomplete: Callable[
             if 1 <= stringPos: 
                 # treating backspace at the very end separately, since it functions differently
                 if stringPos == len(string) + 1: 
-                    # autocomplete option has been changed
+                    replaceString = ""
+
+                    # autocomplete option has been changed, therefore the previous autocomplete is cleared
                     if lastAutocomplete != currentAutocomplete[1:]:
-                        print(' ' * len(lastAutocomplete) + '\b' * len(lastAutocomplete), end='', flush=True)
+                        replaceString += ' ' * len(lastAutocomplete) + '\b' * len(lastAutocomplete)
+
                     # the actual deletion of the character
-                    print('\b \b', end='', flush=True)
-                    print(colored(currentAutocomplete + '\b' * len(currentAutocomplete), autocompleteColor), end='', flush=True)
+                    replaceString += '\b \b'
+
+                    # autocomplete option has been changed, therefore the new autocomplete needs to be reprinted
+                    if lastAutocomplete != currentAutocomplete[1:]:
+                        replaceString += colored(currentAutocomplete + '\b' * len(currentAutocomplete), autocompleteColor)
+                    # autocomplete option remains the same, only the deleted character needs to be reprinted (!! IF the autocomplete actually exists)
+                    elif currentAutocomplete:
+                        replaceString += colored(currentAutocomplete[0] + '\b', autocompleteColor)
+
+                    # printing it all in one go for smoother experience
+                    print(replaceString, end='', flush=True)
 
                 else:
                     # removing the tail end of the string (after the backspace) and the previous autocomplete
@@ -206,7 +225,7 @@ def autocomplete(autocompleteList: list[str] = [], updateAutocomplete: Callable[
                     # returning to actual position in string
                     replaceString += '\b' * (len(string) - stringPos + 1 + len(currentAutocomplete))
 
-                    # printing it all in one go to avoid glitchiness
+                    # printing it all in one go for smoother experience
                     print(replaceString, end='', flush=True)
 
                 stringPos -= 1
@@ -214,10 +233,21 @@ def autocomplete(autocompleteList: list[str] = [], updateAutocomplete: Callable[
         elif char not in [key.UP, key.DOWN, '\n']:
             # treating characters being added at the very end separately, since it functions differently
             if stringPos == len(string) - 1: 
-                # autocomplete option has been changed
+                replaceString = ""
+                
+                # autocomplete option has been changed, therefore the previous autocomplete is cleared
                 if lastAutocomplete[1:] != currentAutocomplete:
-                    print(' ' * len(lastAutocomplete) + '\b' * len(lastAutocomplete), end='', flush=True)
-                print(colored(char, inputColor) + colored(currentAutocomplete, autocompleteColor) + '\b' * len(currentAutocomplete), end='', flush=True)
+                    replaceString += ' ' * len(lastAutocomplete) + '\b' * len(lastAutocomplete)
+
+                # printing the typed character 
+                replaceString += colored(char, inputColor)
+
+                # autocomplete option has been changed, therefore the new autocomplete needs to be printed
+                if lastAutocomplete[1:] != currentAutocomplete:
+                    replaceString += colored(currentAutocomplete, autocompleteColor) + '\b' * len(currentAutocomplete)
+
+                # printing it all in one go for smoother experience
+                print(replaceString, end='', flush=True)
 
             else:
                 # for priting the string from where the character was added, then the new autocomplete 
@@ -231,7 +261,7 @@ def autocomplete(autocompleteList: list[str] = [], updateAutocomplete: Callable[
                 # returning to current position in string
                 replaceString += '\b' * (len(string) - stringPos - 1 + len(currentAutocomplete))
 
-                # printing it all in one go to avoid glitchiness
+                # printing it all in one go for smoother experience
                 print(replaceString, end='', flush=True)
 
             stringPos += 1

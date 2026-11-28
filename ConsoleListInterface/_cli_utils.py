@@ -102,6 +102,9 @@ def autocomplete(autocompleteList: list[str] = [], updateAutocomplete: Callable[
                     # printing it all in one go for smoother experience
                     print(replaceString, end='', flush=True)
 
+                    # !! actually changing the string to the autocomplete option
+                    string = upDownMatches[autocompletePos]
+
                     # cursor moves to the end of the new autocompleted string
                     stringPos = len(string)
 
